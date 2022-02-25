@@ -9,6 +9,7 @@ type Db interface {
 	Create(book Book) error
 	AllBooks() ([]Book, error)
 	CheckBookAvailability(id string) bool
+	GetBookById(id string)
 }
 
 func (db *DbInstance) Create(book Book) error {
@@ -49,4 +50,26 @@ func (db DbInstance) CheckBookAvailability(id string) bool {
 		return false
 	}
 	return book.Available
+}
+
+func (db DbInstance) GetBookById(id string) {
+	book := Book{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM book WHERE id = $1"), id)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	log.Println(book)
+}
+
+func (db DbInstance) GetBookByTitle(title string) {
+	book := Book{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM book WHERE title = $1"), title)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	log.Println(book)
 }
