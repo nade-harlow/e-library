@@ -8,6 +8,7 @@ import (
 type Db interface {
 	Create(book Book) error
 	AllBooks() ([]Book, error)
+	CheckBookAvailability(id string) bool
 }
 
 func (db *DbInstance) Create(book Book) error {
@@ -41,10 +42,10 @@ func (db *DbInstance) AllBooks() ([]Book, error) {
 
 func (db DbInstance) CheckBookAvailability(id string) bool {
 	book := Book{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT available FROM book WHERE id = "), id)
-	err := row.Scan(&book)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT available FROM book WHERE id = $1"), id)
+	err := row.Scan(&book.Available)
 	if err != nil {
-		log.Println("")
+		log.Println(err.Error())
 		return false
 	}
 	return book.Available
