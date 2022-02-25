@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nade-harlow/e-library/app/models"
+	"net/http"
 	"time"
 )
 
 type NewHttp struct {
-	 Db models.Db
-	 Route *gin.Engine
+	Db    models.Db
+	Route *gin.Engine
 }
 
 func New(model models.Db) *NewHttp {
@@ -19,14 +20,18 @@ func New(model models.Db) *NewHttp {
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
-		c.ShouldBindJSON(&book)
+		err := c.ShouldBindJSON(&book)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		//book.ID = uuid.NewString()
 		book.CreatedAt = time.Now().String()
 		book.ModifiedAt = time.Now().String()
 		fmt.Println(book.ID)
-		err := h.Db.Create(book)
+		err = h.Db.Create(book)
 		if err != nil {
-			c.JSON(500, gin.H{"message": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.JSON(200, gin.H{"message": "book added successfully"})
@@ -37,9 +42,9 @@ func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		books, err := h.Db.AllBooks()
 		if err != nil {
-			c.JSON(500, gin.H{"message": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"Books":books})
+		c.JSON(200, gin.H{"Books": books})
 	}
 }
