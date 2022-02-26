@@ -8,7 +8,7 @@ import (
 )
 
 func (db *DbInstance) StudentCheckIn(s Student) error {
-	stm, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO student (id, first_name, last_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)"))
+	stm, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO students (id, first_name, last_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)"))
 	if err != nil {
 		return err
 	}
