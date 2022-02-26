@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/nade-harlow/e-library/app/models"
 	"net/http"
 	"time"
@@ -25,7 +26,7 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		//book.ID = uuid.NewString()
+		book.ID = uuid.NewString()
 		book.CreatedAt = time.Now().String()
 		book.ModifiedAt = time.Now().String()
 		fmt.Println(book.ID)
