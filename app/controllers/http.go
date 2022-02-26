@@ -69,20 +69,14 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 
 func (h NewHttp) BorrowBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		b := struct {
-			Book string `json:"book"`
-		}{}
-		err := c.ShouldBindJSON(&b)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		book, err := h.Db.GetBookByTitle(b.Book)
+		bookTitle := c.Param("book-title")
+		studentID := c.Param("student-id")
+		book, err := h.Db.GetBookByTitle(bookTitle)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		err = h.Db.BorrowBook(book.ID, "b80df4bb-d5a4-4a80-88c8-4be59ec90ddd")
+		err = h.Db.BorrowBook(book.ID, studentID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -95,16 +89,17 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 func (h NewHttp) ReturnBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bookTitle := c.Param("book-title")
+		studentID := c.Param("student-id")
 		book, err := h.Db.GetBookByTitle(bookTitle)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		err = h.Db.ReturnBook("b80df4bb-d5a4-4a80-88c8-4be59ec90ddd", book.ID)
+		err = h.Db.ReturnBook(studentID, book.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"response": "book returned"})
+		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`Thank you for returning '%s'`, book.Title)})
 	}
 }
