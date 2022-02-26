@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/nade-harlow/e-library/app/models"
@@ -63,25 +64,47 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 			return
 		}
 		c.JSON(200, gin.H{"response": "Successfully checked in. Happy reading"})
-		c.Set("student", student.ID)
 	}
 }
 
 func (h NewHttp) BorrowBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		student, exist := c.Get("student")
-		if !exist {
-			c.JSON(http.StatusNotFound, gin.H{"error": "sorry, you have to check in first"})
+		b := struct {
+			Book string `json:"book"`
+		}{}
+		err := c.ShouldBindJSON(&b)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
-		studentID := student.(*models.Student).ID
-		book, err := h.Db.GetBookByTitle("Things fall apart")
+		book, err := h.Db.GetBookByTitle(b.Book)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		err = h.Db.BorrowBook(book.ID, studentID)
+		err = h.Db.BorrowBook(book.ID, "b80df4bb-d5a4-4a80-88c8-4be59ec90ddd")
 		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+
+		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
+	}
+}
+
+func (h NewHttp) ReturnBook() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		bookTitle := c.Param("book-title")
+		book, err := h.Db.GetBookByTitle(bookTitle)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		err = h.Db.ReturnBook("b80df4bb-d5a4-4a80-88c8-4be59ec90ddd", book.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"response": "book returned"})
 	}
 }
