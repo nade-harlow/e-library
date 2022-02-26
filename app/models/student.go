@@ -32,17 +32,30 @@ func (db *DbInstance) BorrowBook(bookId, studentId string) error {
 }
 
 func (db *DbInstance) ReturnBook(studentId, bookId string) error {
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE student_books SET returned = $1 WHERE student_id = $2 AND book_id = $3"))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE student_books SET returned = $1, updated_at = $2 WHERE student_id = $3 AND book_id = $4"))
 	if err != nil {
 		return err
 	}
-	result, er := stmt.Exec(true, studentId, bookId)
+	result, er := stmt.Exec(true, time.Now().String(), studentId, bookId)
 	if er != nil {
 		return er
 	}
 	num, _ := result.RowsAffected()
 	if num < 1 {
 		return errors.New("error updating row")
+	}
+	return nil
+}
+
+func (db *DbInstance) CheckReturnBookStatus(studentId, bookId string) error {
+	sb := StudentBook{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT returned FROM student_books WHERE student_id = $1 AND book_id = $2"), studentId, bookId)
+	err := row.Scan(&sb.Returned)
+	if err != nil {
+		return err
+	}
+	if sb.Returned != true {
+		return errors.New("book has not been returned")
 	}
 	return nil
 }
