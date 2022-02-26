@@ -16,6 +16,7 @@ type Db interface {
 	ReturnBook(studentId, bookId string) error
 	BorrowBook(bookId, studentId string) error
 	StudentCheckIn(s Student) error
+	CheckReturnBookStatus(studentId, bookId string) error
 }
 
 func (db *DbInstance) Create(book Book) error {
