@@ -49,3 +49,21 @@ func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 		c.JSON(200, gin.H{"Books": books})
 	}
 }
+
+func (h NewHttp) CheckIn() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		student := models.Student{}
+		err := c.ShouldBindJSON(&student)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		student.ID = uuid.NewString()
+		err = h.Db.StudentCheckIn(student)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.Set("student", student.ID)
+	}
+}
