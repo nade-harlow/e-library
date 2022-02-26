@@ -10,6 +10,10 @@ type Db interface {
 	AllBooks() ([]Book, error)
 	CheckBookAvailability(id string) bool
 	GetBookById(id string)
+	GetBookByTitle(title string) (Book, error)
+	ReturnBook(studentId, bookId string) error
+	BorrowBook(bookId, studentId string) error
+	StudentCheckIn(s Student) error
 }
 
 func (db *DbInstance) Create(book Book) error {
@@ -63,13 +67,13 @@ func (db DbInstance) GetBookById(id string) {
 	log.Println(book)
 }
 
-func (db DbInstance) GetBookByTitle(title string) {
+func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	book := Book{}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM book WHERE title = $1"), title)
 	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
-		return
+		return book, err
 	}
-	log.Println(book)
+	return book, nil
 }
