@@ -1,8 +1,10 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"strings"
 )
 
 type Db interface {
@@ -17,10 +19,12 @@ type Db interface {
 }
 
 func (db *DbInstance) Create(book Book) error {
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO book (id, title, author, available, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6)"))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO books (id, title, author, available, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)"))
 	if err != nil {
 		return err
 	}
+	book.Title = strings.ToLower(book.Title)
+	book.Author = strings.ToLower(book.Author)
 	_, err = stmt.Exec(book.ID, book.Title, book.Author, book.Available, book.CreatedAt, book.ModifiedAt)
 	if err != nil {
 		return err
@@ -30,7 +34,7 @@ func (db *DbInstance) Create(book Book) error {
 
 func (db *DbInstance) AllBooks() ([]Book, error) {
 	books := []Book{}
-	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM book"))
+	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM books"))
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +51,7 @@ func (db *DbInstance) AllBooks() ([]Book, error) {
 
 func (db DbInstance) CheckBookAvailability(id string) bool {
 	book := Book{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT available FROM book WHERE id = $1"), id)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT available FROM books WHERE id = $1"), id)
 	err := row.Scan(&book.Available)
 	if err != nil {
 		log.Println(err.Error())
@@ -58,7 +62,7 @@ func (db DbInstance) CheckBookAvailability(id string) bool {
 
 func (db DbInstance) GetBookById(id string) {
 	book := Book{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM book WHERE id = $1"), id)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE id = $1"), id)
 	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
@@ -69,11 +73,14 @@ func (db DbInstance) GetBookById(id string) {
 
 func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	book := Book{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM book WHERE title = $1"), title)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
 	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return book, err
+	}
+	if !db.CheckBookAvailability(book.ID) {
+		return book, errors.New("book not found")
 	}
 	return book, nil
 }
