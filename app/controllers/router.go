@@ -14,6 +14,6 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	r.POST("/add", h.AddBook())
 	r.GET("/get-all-books", h.GetAllBooks())
 	r.POST("/check-in", h.CheckIn())
-	r.POST("/borrow", h.BorrowBook())
-	r.POST("/return-book/:book-title", h.ReturnBook())
+	r.POST("/borrow/:student-id/:book-title", h.BorrowBook())
+	r.POST("/return-book/:student-id/:book-title", h.ReturnBook())
 }
