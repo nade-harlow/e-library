@@ -17,7 +17,7 @@ type Student struct {
 	ModifiedAt string `json:"modified_at"`
 }
 
-type StudentBook struct {
+type BorrowedBook struct {
 	ID         string `json:"id"`
 	StudentID  string `json:"student_id"`
 	BookID     string `json:"book_id"`
