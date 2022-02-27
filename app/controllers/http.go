@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/nade-harlow/e-library/app/helper"
 	"github.com/nade-harlow/e-library/app/models"
 	"net/http"
 	"time"
@@ -64,6 +65,7 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 			return
 		}
 		c.JSON(200, gin.H{"response": "Successfully checked in. Happy reading"})
+		c.Set("", student.ID)
 	}
 }
 
@@ -101,5 +103,39 @@ func (h NewHttp) ReturnBook() gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`Thank you for returning '%s'`, book.Title)})
+	}
+}
+
+func (h NewHttp) GetAllBorrowedBooks() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		lending, err := h.Db.GetAllLending()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"Lenders": lending})
+	}
+}
+
+func (h NewHttp) UpdateBookStatus() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		status := c.Param("status")
+		bookTitle := c.Param("book-title")
+		bookStatus, err := helper.CheckBookStatus(status)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		book, er := h.Db.GetBookByTitle(bookTitle)
+		if er != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": er.Error()})
+			return
+		}
+		err = h.Db.UpdateBookStatus(bookStatus, book.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"response": "book status updated successfully"})
 	}
 }
