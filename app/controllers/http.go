@@ -28,6 +28,7 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 			return
 		}
 		book.ID = uuid.NewString()
+		book.Available = true
 		book.CreatedAt = time.Now().String()
 		book.ModifiedAt = time.Now().String()
 		err = h.Db.Create(book)
@@ -65,14 +66,19 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 			return
 		}
 		c.JSON(200, gin.H{"response": "Successfully checked in. Happy reading"})
-		c.Set("", student.ID)
+		helper.SaveSession(student.ID)
 	}
 }
 
 func (h NewHttp) BorrowBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		student, exist := c.Get("student")
+		studentID := student.(string)
+		if !exist || studentID == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "sorry, you have to check in first"})
+			return
+		}
 		bookTitle := c.Param("book-title")
-		studentID := c.Param("student-id")
 		book, err := h.Db.GetBookByTitle(bookTitle)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -139,3 +145,5 @@ func (h NewHttp) UpdateBookStatus() gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"response": "book status updated successfully"})
 	}
 }
+
+// TODO: delete book handler
