@@ -46,16 +46,3 @@ func (db *DbInstance) ReturnBook(studentId, bookId string) error {
 	}
 	return nil
 }
-
-func (db *DbInstance) CheckReturnBookStatus(studentId, bookId string) error {
-	sb := StudentBook{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT returned FROM student_books WHERE student_id = $1 AND book_id = $2"), studentId, bookId)
-	err := row.Scan(&sb.Returned)
-	if err != nil {
-		return err
-	}
-	if sb.Returned != true {
-		return errors.New("book has not been returned")
-	}
-	return nil
-}
