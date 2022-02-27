@@ -19,9 +19,11 @@ func Init() *sql.DB {
 		log.Fatal("Error loading .env file")
 	}
 	db := postgresql()
-	fmt.Println(db)
-	//NewInstance(db)
 	return db
+}
+
+func NewInstance(db *sql.DB) *DbInstance {
+	return &DbInstance{Postgres: db}
 }
 
 func postgresql() *sql.DB {
@@ -39,8 +41,4 @@ func postgresql() *sql.DB {
 
 	log.Println("Successfully connected!")
 	return db
-}
-
-func NewInstance(db *sql.DB) *DbInstance {
-	return &DbInstance{Postgres: db}
 }
