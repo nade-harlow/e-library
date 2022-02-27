@@ -12,7 +12,7 @@ func (db *DbInstance) StudentCheckIn(s Student) error {
 	if err != nil {
 		return err
 	}
-	_, err = stm.Exec(s.ID, s.FirstName, s.LastName, s.CreatedAt, s.ModifiedAt)
+	_, err = stm.Exec(s.ID, s.FirstName, s.LastName, time.Now().String(), time.Now().String())
 	if err != nil {
 		return err
 	}
