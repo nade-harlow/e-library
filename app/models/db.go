@@ -5,18 +5,21 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 )
 
 type Db interface {
 	Create(book Book) error
 	AllBooks() ([]Book, error)
-	CheckBookAvailability(id string) bool
+	CheckBookAvailability(title string) (bool, string)
 	GetBookById(id string)
 	GetBookByTitle(title string) (Book, error)
 	ReturnBook(studentId, bookId string) error
 	BorrowBook(bookId, studentId string) error
 	StudentCheckIn(s Student) error
-	CheckReturnBookStatus(studentId, bookId string) error
+	CheckLendStatus(studentId, bookId string) error
+	GetAllLending() ([]StudentBook, error)
+	UpdateBookStatus(status bool, bookID string) error
 }
 
 func (db *DbInstance) Create(book Book) error {
@@ -50,15 +53,16 @@ func (db *DbInstance) AllBooks() ([]Book, error) {
 	return books, nil
 }
 
-func (db DbInstance) CheckBookAvailability(id string) bool {
+func (db DbInstance) CheckBookAvailability(title string) (bool, string) {
 	book := Book{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT available FROM books WHERE id = $1"), id)
-	err := row.Scan(&book.Available)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT available, author FROM books WHERE title = $1"), title)
+	err := row.Scan(&book.Available, &book.Author)
 	if err != nil {
 		log.Println(err.Error())
-		return false
+		return false, book.Author
 	}
-	return book.Available
+
+	return book.Available, book.Author
 }
 
 func (db DbInstance) GetBookById(id string) {
@@ -69,19 +73,31 @@ func (db DbInstance) GetBookById(id string) {
 		log.Println(err.Error())
 		return
 	}
-	log.Println(book)
 }
 
 func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	book := Book{}
+	_, exist := db.CheckBookAvailability(title)
+	if exist == "" {
+		return book, errors.New("book does not exist")
+	}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
 	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return book, err
 	}
-	if !db.CheckBookAvailability(book.ID) {
-		return book, errors.New("book not found")
-	}
 	return book, nil
+}
+
+func (db DbInstance) UpdateBookStatus(status bool, bookID string) error {
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET available = $1, updated_at = $2 WHERE id = $3"))
+	if err != nil {
+		return err
+	}
+	_, er := stmt.Exec(status, time.Now().String(), bookID)
+	if er != nil {
+		return er
+	}
+	return nil
 }
