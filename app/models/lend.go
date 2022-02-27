@@ -5,15 +5,14 @@ import (
 	"fmt"
 )
 
-// GetAllLendings TODO: change student_books to borrowed_books
-func (db *DbInstance) GetAllLending() ([]StudentBook, error) {
-	var books []StudentBook
+func (db *DbInstance) GetAllLending() ([]BorrowedBook, error) {
+	var books []BorrowedBook
 	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM student_books"))
 	if err != nil {
 		return nil, err
 	}
 	for row.Next() {
-		book := StudentBook{}
+		book := BorrowedBook{}
 		err = row.Scan(&book.ID, &book.StudentID, &book.BookID, &book.Returned, &book.CreatedAt, &book.ModifiedAt)
 		if err != nil {
 			return nil, err
@@ -24,7 +23,7 @@ func (db *DbInstance) GetAllLending() ([]StudentBook, error) {
 }
 
 func (db *DbInstance) CheckLendStatus(studentId, bookId string) error {
-	sb := StudentBook{}
+	sb := BorrowedBook{}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT returned FROM student_books WHERE student_id = $1 AND book_id = $2"), studentId, bookId)
 	err := row.Scan(&sb.Returned)
 	if err != nil {
