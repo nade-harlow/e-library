@@ -7,11 +7,8 @@ import (
 
 func (h *NewHttp) Routes(r *gin.Engine) {
 	r.Use(middleware.Session())
-	r.Use(gin.Logger())
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "hello"})
-	})
 
+	r.Use(gin.Recovery())
 	book := r.Group("library/book")
 	{
 		book.POST("/add-book", h.AddBook())
@@ -31,5 +28,4 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	{
 		lend.GET("/get-lenders", h.GetAllBorrowedBooks())
 	}
-
 }
