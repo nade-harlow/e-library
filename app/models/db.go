@@ -12,4 +12,6 @@ type Db interface {
 	CheckLendStatus(studentId, bookId string) error
 	GetAllLending() ([]BorrowedBook, error)
 	UpdateBookStatus(status bool, bookID string) error
+	DeleteBookById(bookID string) error
+	DeleteBookByTitle(bookTitle string) error
 }
