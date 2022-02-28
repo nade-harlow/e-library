@@ -83,7 +83,7 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	return book, nil
 }
 
-func (db DbInstance) UpdateBookStatus(status bool, bookID string) error {
+func (db *DbInstance) UpdateBookStatus(status bool, bookID string) error {
 	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET available = $1, updated_at = $2 WHERE id = $3"))
 	if err != nil {
 		return err
@@ -95,4 +95,26 @@ func (db DbInstance) UpdateBookStatus(status bool, bookID string) error {
 	return nil
 }
 
-// TODO: delete book method
+func (db *DbInstance) DeleteBookById(bookID string) error {
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("DELETE FROM books WHERE id = $1"))
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(bookID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *DbInstance) DeleteBookByTitle(bookTitle string) error {
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("DELETE FROM books WHERE title = $1"))
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(bookTitle)
+	if err != nil {
+		return err
+	}
+	return nil
+}
