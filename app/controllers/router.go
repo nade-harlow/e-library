@@ -17,6 +17,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		book.POST("/add-book", h.AddBook())
 		book.GET("/get-all-books", h.GetAllBooks())
 		book.PUT("/update/:book-title/:status", h.UpdateBookStatus())
+		book.DELETE("/delete/:book-id", h.DeleteBook())
 	}
 
 	student := r.Group("library/student")
