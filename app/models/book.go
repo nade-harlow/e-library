@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (db *DbInstance) Create(book Book) error {
+func (db *DbInstance) AddBook(book Book) error {
 	book.Title = strings.ToLower(book.Title)
 	book.Author = strings.ToLower(book.Author)
 	_, exist := db.CheckBookAvailability(book.Title)
@@ -26,7 +26,7 @@ func (db *DbInstance) Create(book Book) error {
 	return nil
 }
 
-func (db *DbInstance) AllBooks() ([]Book, error) {
+func (db *DbInstance) GetAllBooks() ([]Book, error) {
 	books := []Book{}
 	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM books"))
 	if err != nil {
@@ -74,6 +74,17 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	if !available {
 		return book, errors.New(fmt.Sprintf(`'%s' is no longer in shelf`, title))
 	}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	if err != nil {
+		log.Println(err.Error())
+		return book, err
+	}
+	return book, nil
+}
+
+func (db DbInstance) GetBook(title string) (Book, error) {
+	book := Book{}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
 	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
