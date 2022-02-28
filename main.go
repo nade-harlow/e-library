@@ -12,9 +12,9 @@ import (
 func main() {
 	router := gin.Default()
 	db := models.Init()
-	dbIns := models.NewInstance(db)
-	Nh := controllers.New(dbIns)
-	Nh.Routes(router)
+	dbInstance := models.NewInstance(db)
+	Newhttp := controllers.New(dbInstance)
+	Newhttp.Routes(router)
 	port := os.Getenv("DB_HOST")
 	log.Printf("Server listening on port %s\n", port)
 	err := router.Run()
