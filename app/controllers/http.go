@@ -31,7 +31,7 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 		book.Available = true
 		book.CreatedAt = time.Now().String()
 		book.ModifiedAt = time.Now().String()
-		err = h.Db.Create(book)
+		err = h.Db.AddBook(book)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -42,7 +42,7 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 
 func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		books, err := h.Db.AllBooks()
+		books, err := h.Db.GetAllBooks()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -132,7 +132,7 @@ func (h NewHttp) UpdateBookStatus() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		book, er := h.Db.GetBookByTitle(bookTitle)
+		book, er := h.Db.GetBook(bookTitle)
 		if er != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": er.Error()})
 			return
