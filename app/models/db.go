@@ -1,11 +1,12 @@
 package models
 
 type Db interface {
-	Create(book Book) error
-	AllBooks() ([]Book, error)
+	AddBook(book Book) error
+	GetAllBooks() ([]Book, error)
 	CheckBookAvailability(title string) (bool, string)
 	GetBookById(id string)
 	GetBookByTitle(title string) (Book, error)
+	GetBook(title string) (Book, error)
 	ReturnBook(studentId, bookId string) error
 	BorrowBook(bookId, studentId string) error
 	StudentCheckIn(s Student) error
