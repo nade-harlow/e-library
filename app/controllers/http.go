@@ -146,4 +146,14 @@ func (h NewHttp) UpdateBookStatus() gin.HandlerFunc {
 	}
 }
 
-// TODO: delete book handler
+func (h NewHttp) DeleteBook() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		bookID := c.Param("book-id")
+		err := h.Db.DeleteBookById(bookID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"response": "book has been deleted successfully"})
+	}
+}
