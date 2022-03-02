@@ -1,5 +1,6 @@
 package models
 
+//go:generate mockgen -destination=../mocks/mock_db.go -package=mocks github.com/nade-harlow/e-library/models Db
 type Db interface {
 	AddBook(book Book) error
 	GetAllBooks() ([]Book, error)
