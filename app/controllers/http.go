@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/nade-harlow/e-library/app/helper"
 	"github.com/nade-harlow/e-library/app/models"
+	"log"
 	"net/http"
-	"time"
 )
 
 type NewHttp struct {
@@ -23,14 +23,11 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
 		err := c.ShouldBindJSON(&book)
+		log.Println("here")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		book.ID = uuid.NewString()
-		book.Available = true
-		book.CreatedAt = time.Now().String()
-		book.ModifiedAt = time.Now().String()
 		err = h.Db.AddBook(book)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
