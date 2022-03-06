@@ -347,3 +347,37 @@ func TestNewHttp_UpdateBookStatus(t *testing.T) {
 		t.Errorf("Expected %v, got %s", gin.H{"response": "book status updated successfully"}, string(response.Body.Bytes()))
 	}
 }
+
+func TestNewHttp_DeleteBook(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	ctrl := gomock.NewController(t)
+	mdb := db.NewMockDb(ctrl)
+	router := gin.Default()
+	newhttp := &NewHttp{
+		Db:    mdb,
+		Route: router,
+	}
+	newhttp.Routes(router)
+
+	bookID := "1"
+	mdb.EXPECT().DeleteBookById(bookID).Return(nil)
+
+	request, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("/library/book/delete/%s", bookID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Content-Type", "application/json")
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	res, err := json.Marshal(gin.H{"response": "book has been deleted successfully"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+	}
+	if string(response.Body.Bytes()) != string(res) {
+		t.Errorf("Expected %v, got %s", gin.H{"response": "book has been deleted successfully"}, string(response.Body.Bytes()))
+	}
+}
