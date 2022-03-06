@@ -262,3 +262,46 @@ func TestNewHttp_ReturnBook(t *testing.T) {
 		t.Errorf("Expected %s, got %s", `{"response": fmt.Sprintf("Thank you for returning '%s'", book.Title)}`, string(response.Body.Bytes()))
 	}
 }
+
+func TestNewHttp_GetAllBorrowedBooks(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	ctrl := gomock.NewController(t)
+	mdb := db.NewMockDb(ctrl)
+	router := gin.Default()
+	newhttp := &NewHttp{
+		Db:    mdb,
+		Route: router,
+	}
+	newhttp.Routes(router)
+
+	lendings := []models.BorrowedBook{
+		{
+			ID:         "1",
+			StudentID:  "1",
+			BookID:     "1",
+			Returned:   false,
+			CreatedAt:  "1pm",
+			ModifiedAt: "1pm",
+		},
+	}
+	mdb.EXPECT().GetAllLending().Return(lendings, nil)
+
+	request, err := http.NewRequest(http.MethodGet, "/library/lend/get-lenders", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Content-Type", "application/json")
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	res, err := json.Marshal(gin.H{"Lenders": lendings})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+	}
+	if string(response.Body.Bytes()) != string(res) {
+		t.Errorf("Expected %v, got %s", gin.H{"Lenders": lendings}, string(response.Body.Bytes()))
+	}
+}
