@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"strings"
 	"time"
@@ -11,6 +12,10 @@ import (
 func (db *DbInstance) AddBook(book Book) error {
 	book.Title = strings.ToLower(book.Title)
 	book.Author = strings.ToLower(book.Author)
+	book.ID = uuid.NewString()
+	book.Available = true
+	book.CreatedAt = time.Now().String()
+	book.ModifiedAt = time.Now().String()
 	_, exist := db.CheckBookAvailability(book.Title)
 	if exist != "" {
 		return errors.New(fmt.Sprintf(`'%s' Already exist in library`, book.Title))
