@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	db "github.com/nade-harlow/e-library/app/mocks"
@@ -169,5 +170,48 @@ func TestNewHttp_CheckIn(t *testing.T) {
 	}
 	if string(response.Body.Bytes()) != string(res) {
 		t.Errorf("Expected %s, got %s", `{"response": "Successfully checked in. Happy reading"}`, string(response.Body.Bytes()))
+	}
+}
+
+func TestNewHttp_BorrowBook(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	ctrl := gomock.NewController(t)
+	mdb := db.NewMockDb(ctrl)
+	router := gin.Default()
+	newhttp := &NewHttp{
+		Db:    mdb,
+		Route: router,
+	}
+	newhttp.Routes(router)
+
+	studentID := "1"
+	book := models.Book{
+		ID:         "1",
+		Title:      "women of owo",
+		Author:     "kwame",
+		Available:  true,
+		CreatedAt:  "1pm",
+		ModifiedAt: "1pm",
+	}
+	mdb.EXPECT().GetBookByTitle(gomock.Any()).Return(book, nil)
+	mdb.EXPECT().BorrowBook(book.ID, studentID).Return(nil)
+
+	request, err := http.NewRequest(http.MethodGet, "/library/student/borrow/1", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Content-Type", "application/json")
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	res, err := json.Marshal(gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+	}
+	if string(response.Body.Bytes()) != string(res) {
+		t.Errorf("Expected %s, got %s", `{"response": fmt.Sprintf("you just borrowed '%s' by '%s'", book.Title, book.Author)}`, string(response.Body.Bytes()))
 	}
 }
