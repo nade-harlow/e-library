@@ -3,10 +3,8 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/nade-harlow/e-library/app/helper"
 	"github.com/nade-harlow/e-library/app/models"
-	"log"
 	"net/http"
 )
 
@@ -23,7 +21,6 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
 		err := c.ShouldBindJSON(&book)
-		log.Println("here")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -56,7 +53,6 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		student.ID = uuid.NewString()
 		err = h.Db.StudentCheckIn(student)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
