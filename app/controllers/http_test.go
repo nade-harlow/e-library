@@ -79,3 +79,52 @@ func TestNewHttp_AddBook(t *testing.T) {
 	})
 
 }
+
+func TestNewHttp_GetAllBooks(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	ctrl := gomock.NewController(t)
+	mdb := db.NewMockDb(ctrl)
+	router := gin.Default()
+	newhttp := &NewHttp{
+		Db:    mdb,
+		Route: router,
+	}
+	newhttp.Routes(router)
+	book := []models.Book{
+		{
+			ID:         "1",
+			Title:      "women of owo",
+			Author:     "kwame",
+			Available:  true,
+			CreatedAt:  "1pm",
+			ModifiedAt: "1pm",
+		},
+		{
+			ID:         "2",
+			Title:      "arms and the man",
+			Author:     "bernard shaw",
+			Available:  true,
+			CreatedAt:  "3pm",
+			ModifiedAt: "3pm",
+		},
+	}
+	mdb.EXPECT().GetAllBooks().Return(book, nil)
+	request, err := http.NewRequest(http.MethodGet, "/library/book/get-all-books", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Content-Type", "application/json")
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	res, err := json.Marshal(gin.H{"Books": book})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+	}
+	if string(response.Body.Bytes()) != string(res) {
+		t.Errorf("Expected %s, got %s", `{"message":"book added successfully"}`, string(response.Body.Bytes()))
+	}
+}
