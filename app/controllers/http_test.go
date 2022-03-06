@@ -128,3 +128,46 @@ func TestNewHttp_GetAllBooks(t *testing.T) {
 		t.Errorf("Expected %s, got %s", `{"message":"book added successfully"}`, string(response.Body.Bytes()))
 	}
 }
+
+func TestNewHttp_CheckIn(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	ctrl := gomock.NewController(t)
+	mdb := db.NewMockDb(ctrl)
+	router := gin.Default()
+	newhttp := &NewHttp{
+		Db:    mdb,
+		Route: router,
+	}
+	newhttp.Routes(router)
+	student := models.Student{
+		ID:         "1",
+		FirstName:  "Jim",
+		LastName:   "Morrison",
+		CreatedAt:  "1pm",
+		ModifiedAt: "1pm",
+	}
+
+	mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(nil)
+	body, err := json.Marshal(&student)
+	if err != nil {
+		t.Fail()
+	}
+	request, err := http.NewRequest(http.MethodPost, "/library/student/check-in", strings.NewReader(string(body)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Content-Type", "application/json")
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	res, err := json.Marshal(gin.H{"response": "Successfully checked in. Happy reading"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+	}
+	if string(response.Body.Bytes()) != string(res) {
+		t.Errorf("Expected %s, got %s", `{"response": "Successfully checked in. Happy reading"}`, string(response.Body.Bytes()))
+	}
+}
