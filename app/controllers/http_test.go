@@ -166,8 +166,8 @@ func TestNewHttp_CheckIn(t *testing.T) {
 		ModifiedAt: "1pm",
 	}
 
-	mdb.EXPECT().StudentCheckIn(student).Return(errors.New("error checking student in"))
-	mdb.EXPECT().StudentCheckIn(student).Return(nil)
+	mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(errors.New("error checking student in"))
+	mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(nil)
 	body, err := json.Marshal(&student)
 	if err != nil {
 		t.Fail()
@@ -221,7 +221,6 @@ func TestNewHttp_BorrowBook(t *testing.T) {
 	}
 	newhttp.Routes(router)
 
-	studentID := "1"
 	book := models.Book{
 		ID:         "1",
 		Title:      "women of owo",
@@ -231,7 +230,7 @@ func TestNewHttp_BorrowBook(t *testing.T) {
 		ModifiedAt: "1pm",
 	}
 	mdb.EXPECT().GetBookByTitle(gomock.Any()).Return(book, nil)
-	mdb.EXPECT().BorrowBook(book.ID, studentID).Return(nil)
+	mdb.EXPECT().BorrowBook(book.ID, gomock.Any()).Return(nil)
 
 	request, err := http.NewRequest(http.MethodGet, "/library/student/borrow/1", nil)
 	if err != nil {
