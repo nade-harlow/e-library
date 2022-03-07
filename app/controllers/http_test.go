@@ -166,7 +166,7 @@ func TestNewHttp_CheckIn(t *testing.T) {
 		ModifiedAt: "1pm",
 	}
 
-	mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(nil)
+	mdb.EXPECT().StudentCheckIn(student).Return(nil)
 	body, err := json.Marshal(&student)
 	if err != nil {
 		t.Fail()
