@@ -166,29 +166,48 @@ func TestNewHttp_CheckIn(t *testing.T) {
 		ModifiedAt: "1pm",
 	}
 
+	mdb.EXPECT().StudentCheckIn(student).Return(errors.New("error checking student in"))
 	mdb.EXPECT().StudentCheckIn(student).Return(nil)
 	body, err := json.Marshal(&student)
 	if err != nil {
 		t.Fail()
 	}
-	request, err := http.NewRequest(http.MethodPost, "/library/student/check-in", strings.NewReader(string(body)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	request.Header.Set("Content-Type", "application/json")
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response, request)
 
-	res, err := json.Marshal(gin.H{"response": "Successfully checked in. Happy reading"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if response.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
-	}
-	if string(response.Body.Bytes()) != string(res) {
-		t.Errorf("Expected %s, got %s", `{"response": "Successfully checked in. Happy reading"}`, string(response.Body.Bytes()))
-	}
+	t.Run("testing error checking student in", func(t *testing.T) {
+		request, err := http.NewRequest(http.MethodPost, "/library/student/check-in", strings.NewReader(string(body)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		if response.Code != http.StatusInternalServerError {
+			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+		}
+	})
+
+	t.Run("testing checking student in success", func(t *testing.T) {
+		request, err := http.NewRequest(http.MethodPost, "/library/student/check-in", strings.NewReader(string(body)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		res, err := json.Marshal(gin.H{"response": "Successfully checked in. Happy reading"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if response.Code != http.StatusOK {
+			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+		}
+		if string(response.Body.Bytes()) != string(res) {
+			t.Errorf("Expected %s, got %s", `{"response": "Successfully checked in. Happy reading"}`, string(response.Body.Bytes()))
+		}
+	})
+
 }
 
 func TestNewHttp_BorrowBook(t *testing.T) {
