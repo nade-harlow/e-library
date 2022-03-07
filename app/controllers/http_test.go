@@ -183,7 +183,7 @@ func TestNewHttp_CheckIn(t *testing.T) {
 		router.ServeHTTP(response, request)
 
 		if response.Code != http.StatusInternalServerError {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+			t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, response.Code)
 		}
 	})
 
@@ -397,24 +397,42 @@ func TestNewHttp_DeleteBook(t *testing.T) {
 	newhttp.Routes(router)
 
 	bookID := "1"
+	mdb.EXPECT().DeleteBookById(bookID).Return(errors.New("error deleting book"))
 	mdb.EXPECT().DeleteBookById(bookID).Return(nil)
 
-	request, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("/library/book/delete/%s", bookID), nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	request.Header.Set("Content-Type", "application/json")
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response, request)
+	t.Run("testing error deleting book", func(t *testing.T) {
+		request, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("/library/book/delete/%s", bookID), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
 
-	res, err := json.Marshal(gin.H{"response": "book has been deleted successfully"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if response.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
-	}
-	if string(response.Body.Bytes()) != string(res) {
-		t.Errorf("Expected %v, got %s", gin.H{"response": "book has been deleted successfully"}, string(response.Body.Bytes()))
-	}
+		if response.Code != http.StatusInternalServerError {
+			t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, response.Code)
+		}
+	})
+
+	t.Run("testing delete book success", func(t *testing.T) {
+		request, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("/library/book/delete/%s", bookID), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		res, err := json.Marshal(gin.H{"response": "book has been deleted successfully"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if response.Code != http.StatusOK {
+			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+		}
+		if string(response.Body.Bytes()) != string(res) {
+			t.Errorf("Expected %v, got %s", gin.H{"response": "book has been deleted successfully"}, string(response.Body.Bytes()))
+		}
+	})
+
 }
