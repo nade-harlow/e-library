@@ -109,25 +109,43 @@ func TestNewHttp_GetAllBooks(t *testing.T) {
 			ModifiedAt: "3pm",
 		},
 	}
+	mdb.EXPECT().GetAllBooks().Return(nil, errors.New("some error getting books"))
 	mdb.EXPECT().GetAllBooks().Return(book, nil)
-	request, err := http.NewRequest(http.MethodGet, "/library/book/get-all-books", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	request.Header.Set("Content-Type", "application/json")
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response, request)
+	t.Run("testing error getting books", func(t *testing.T) {
+		request, err := http.NewRequest(http.MethodGet, "/library/book/get-all-books", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
 
-	res, err := json.Marshal(gin.H{"Books": book})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if response.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
-	}
-	if string(response.Body.Bytes()) != string(res) {
-		t.Errorf("Expected %s, got %s", `{"message":"book added successfully"}`, string(response.Body.Bytes()))
-	}
+		if response.Code != http.StatusInternalServerError {
+			t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, response.Code)
+		}
+	})
+
+	t.Run("testing getting all books success", func(t *testing.T) {
+		request, err := http.NewRequest(http.MethodGet, "/library/book/get-all-books", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		res, err := json.Marshal(gin.H{"Books": book})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if response.Code != http.StatusOK {
+			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+		}
+		if string(response.Body.Bytes()) != string(res) {
+			t.Errorf("Expected %s, got %s", gin.H{"Books": book}, string(response.Body.Bytes()))
+		}
+	})
+
 }
 
 func TestNewHttp_CheckIn(t *testing.T) {
