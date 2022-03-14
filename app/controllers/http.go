@@ -20,7 +20,7 @@ func New(model models.Db) *NewHttp {
 
 func (h NewHttp) Home() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(200, "index.html", nil)
+		c.HTML(200, "student.checkin.html", nil)
 	}
 }
 
@@ -55,13 +55,12 @@ func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 func (h *NewHttp) CheckIn() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		student := models.Student{}
-		err := c.ShouldBindJSON(&student)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+		first_name := c.PostForm("first_name")
+		last_name := c.PostForm("last_name")
+		student.FirstName = first_name
+		student.LastName = last_name
 		student.ID = uuid.NewString()
-		err = h.Db.StudentCheckIn(student)
+		err := h.Db.StudentCheckIn(student)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
