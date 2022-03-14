@@ -18,6 +18,12 @@ func New(model models.Db) *NewHttp {
 	return &NewHttp{Db: model}
 }
 
+func (h NewHttp) Home() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(200, "index.html", nil)
+	}
+}
+
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
