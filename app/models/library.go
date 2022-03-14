@@ -4,6 +4,7 @@ type Book struct {
 	ID         string `json:"id"`
 	Title      string `json:"title"`
 	Author     string `json:"author"`
+	Url        string `json:"url"`
 	Available  bool   `json:"available"`
 	CreatedAt  string `json:"created_at"`
 	ModifiedAt string `json:"modified_at"`
