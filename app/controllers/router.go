@@ -8,7 +8,7 @@ import (
 func (h *NewHttp) Routes(r *gin.Engine) {
 	r.Use(middleware.Session())
 	r.Use(gin.Recovery())
-
+	r.GET("/", h.Home())
 	book := r.Group("library/book")
 	{
 		book.POST("/add-book", h.AddBook())
