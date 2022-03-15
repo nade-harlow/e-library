@@ -56,10 +56,10 @@ func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 func (h *NewHttp) CheckIn() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		student := models.Student{}
-		first_name := c.PostForm("first_name")
-		last_name := c.PostForm("last_name")
-		student.FirstName = first_name
-		student.LastName = last_name
+		firstName := c.PostForm("first_name")
+		lastName := c.PostForm("last_name")
+		student.FirstName = firstName
+		student.LastName = lastName
 		student.ID = uuid.NewString()
 		err := h.Db.StudentCheckIn(student)
 		if err != nil {
