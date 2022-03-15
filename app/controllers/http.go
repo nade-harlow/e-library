@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/nade-harlow/e-library/app/helper"
 	"github.com/nade-harlow/e-library/app/models"
+	"log"
 	"net/http"
 )
 
@@ -61,13 +62,21 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 		student.FirstName = firstName
 		student.LastName = lastName
 		student.ID = uuid.NewString()
-		err := h.Db.StudentCheckIn(student)
+		data, err := h.Db.GetStudentByName(firstName, lastName)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.Println(err.Error())
+		}
+		if data.ID == "" {
+			err = h.Db.StudentCheckIn(student)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			helper.SaveSession(student.ID)
+			c.Redirect(302, "/library/book/get-all-books")
 			return
 		}
-		//c.JSON(200, gin.H{"response": "Successfully checked in. Happy reading"})
-		helper.SaveSession(student.ID)
+		helper.SaveSession(data.ID)
 		c.Redirect(302, "/library/book/get-all-books")
 	}
 }
@@ -92,7 +101,7 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-
+		c.Redirect(302, "/library/book/get-all-books")
 		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
 	}
 }
@@ -111,18 +120,27 @@ func (h NewHttp) ReturnBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+		c.Redirect(302, "/library/lend/get-lenders")
 		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`Thank you for returning '%s'`, book.Title)})
 	}
 }
 
 func (h NewHttp) GetAllBorrowedBooks() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		lending, err := h.Db.GetAllLending()
+		student, exist := c.Get("student")
+		studentID := student.(string)
+		if !exist || studentID == "" {
+			c.Redirect(302, "/library/student/check-in")
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "sorry, you have to check in first"})
+			return
+		}
+		books, err := h.Db.GetBorrowedBooks(studentID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"Lenders": lending})
+		c.HTML(200, "return.book.portal.html", gin.H{"Borrowed": books})
+		//c.JSON(http.StatusOK, gin.H{"Lenders": books})
 	}
 }
 
