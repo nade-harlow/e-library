@@ -77,6 +77,7 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 		student, exist := c.Get("student")
 		studentID := student.(string)
 		if !exist || studentID == "" {
+			c.Redirect(302, "/library/student/check-in")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "sorry, you have to check in first"})
 			return
 		}
