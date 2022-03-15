@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{{template "header.html"}}
+{{template "navbar.html"}}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card book-card" style="width:400px">
+                <img class="card-img-top" style="width: auto; height: 550px" src="{{.Url}}" alt="{{.Title}}">
+                <div class="card-body" style="text-align: center">
+                    <h4 class="card-title">{{.Author}}</h4>
+                    <p class="card-text">{{.Title}}</p>
+                    <!--                    <a href="#" class="btn btn-primary">See Profile</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
 
-</body>
-</html>
+</div>
+{{template "footer.html"}}
