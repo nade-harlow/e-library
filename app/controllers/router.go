@@ -21,6 +21,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	{
 		student.GET("/borrow/:book-title", h.BorrowBook())
 		student.POST("/return-book/:student-id/:book-title", h.ReturnBook())
+		student.GET("/check-in", h.Home())
 		student.POST("/check-in", h.CheckIn())
 	}
 
