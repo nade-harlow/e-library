@@ -1,0 +1,23 @@
+{{template "header.html"}}
+{{template "navbar.html"}}
+<br>
+<div class="container">
+    <div class="row">
+        {{range .Books}}
+
+        <div class="col">
+            <div class="card book-card" style="width:400px">
+                <img class="card-img-top" style="width: auto; height: 550px" src="{{.Url}}" alt="Card image">
+                <div class="card-body" style="text-align: center">
+                    <h4 class="card-title">{{.Title}}</h4>
+                    <p class="card-text">{{.Author}}</p>
+<!--                    <a href="#" class="btn btn-primary">See Profile</a>-->
+                </div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+</div>
+
+{{template "footer.html"}}
