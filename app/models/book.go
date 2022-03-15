@@ -20,11 +20,11 @@ func (db *DbInstance) AddBook(book Book) error {
 	if exist != "" {
 		return errors.New(fmt.Sprintf(`'%s' Already exist in library`, book.Title))
 	}
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO books (id, title, author, available, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)"))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO books (id, title, author, url, available, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"))
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(book.ID, book.Title, book.Author, book.Available, book.CreatedAt, book.ModifiedAt)
+	_, err = stmt.Exec(book.ID, book.Title, book.Author, book.Url, book.Available, book.CreatedAt, book.ModifiedAt)
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func (db *DbInstance) GetAllBooks() ([]Book, error) {
 	}
 	for row.Next() {
 		book := Book{}
-		err = row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+		err = row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -63,7 +63,7 @@ func (db DbInstance) CheckBookAvailability(title string) (bool, string) {
 func (db DbInstance) GetBookById(id string) {
 	book := Book{}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE id = $1"), id)
-	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -91,7 +91,7 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 func (db DbInstance) GetBook(title string) (Book, error) {
 	book := Book{}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
-	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return book, err
