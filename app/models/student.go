@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"log"
+	"strings"
 	"time"
 )
 
 func (db *DbInstance) StudentCheckIn(s Student) error {
-
+	s.FirstName = strings.ToLower(s.FirstName)
+	s.LastName = strings.ToLower(s.LastName)
 	stm, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO students (id, first_name, last_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)"))
 	if err != nil {
 		return err
@@ -33,6 +35,11 @@ func (db DbInstance) GetStudentByName(first, last string) (Student, error) {
 }
 
 func (db *DbInstance) BorrowBook(bookId, studentId string) error {
+	bbb, _ := db.CheckIfBorrowed(studentId, bookId)
+	if bbb.BookID != "" {
+		return errors.New("you've already borrowed this book")
+	}
+	log.Println(bbb.BookID)
 	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO borrowed_books(id, student_id, book_id, returned, created_at, updated_at) VALUES ($1, $2, $3,$4, $5, $6)"))
 	if err != nil {
 		return err
@@ -42,6 +49,17 @@ func (db *DbInstance) BorrowBook(bookId, studentId string) error {
 		return err
 	}
 	return err
+}
+
+func (db DbInstance) CheckIfBorrowed(studentID, bookID string) (BorrowedBook, error) {
+	bb := BorrowedBook{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM borrowed_books WHERE student_id = $1 AND book_id = $2 AND returned = false"), studentID, bookID)
+	err := row.Scan(&bb.ID, &bb.StudentID, &bb.BookID, &bb.Returned, &bb.CreatedAt, &bb.ModifiedAt)
+	if err != nil {
+		log.Println(err.Error())
+		return bb, err
+	}
+	return bb, nil
 }
 
 func (db *DbInstance) ReturnBook(studentId, bookId string) error {
@@ -62,14 +80,14 @@ func (db *DbInstance) ReturnBook(studentId, bookId string) error {
 
 func (db DbInstance) GetBorrowedBooks(studentId string) ([]map[string]interface{}, error) {
 	var Bbooks []map[string]interface{}
-	row, err := db.Postgres.Query(fmt.Sprintf("SELECT s.id, s.first_name, s.last_name, k.id, k.title, k.author FROM (borrowed_books b INNER JOIN students s ON b.student_id = s.id) INNER JOIN books k ON k.id = b.book_id AND b.student_id = $1"), studentId)
+	row, err := db.Postgres.Query(fmt.Sprintf("SELECT s.id, s.first_name, s.last_name, k.id, k.title, k.author, k.url FROM (borrowed_books b INNER JOIN students s ON b.student_id = s.id) INNER JOIN books k ON k.id = b.book_id AND b.student_id = $1 AND b.returned = false"), studentId)
 	if err != nil {
 		return nil, err
 	}
 	for row.Next() {
 
-		var StudentID, FirstName, LastName, BookID, BookTitle, BookAuthor string
-		err = row.Scan(&StudentID, &FirstName, &LastName, &BookID, &BookTitle, &BookAuthor)
+		var StudentID, FirstName, LastName, BookID, BookTitle, BookAuthor, BookUrl string
+		err = row.Scan(&StudentID, &FirstName, &LastName, &BookID, &BookTitle, &BookAuthor, &BookUrl)
 		if err != nil {
 			return nil, err
 		}
@@ -80,6 +98,7 @@ func (db DbInstance) GetBorrowedBooks(studentId string) ([]map[string]interface{
 			"BookID":     BookID,
 			"BookTitle":  BookTitle,
 			"BookAuthor": BookAuthor,
+			"BookUrl":    BookUrl,
 		}
 		Bbooks = append(Bbooks, borrowedBooks)
 	}
