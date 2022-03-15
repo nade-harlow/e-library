@@ -21,7 +21,7 @@ func (db *DbInstance) StudentCheckIn(s Student) error {
 }
 
 func (db *DbInstance) BorrowBook(bookId, studentId string) error {
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO student_books(id, student_id, book_id, returned, created_at, updated_at) VALUES ($1, $2, $3,$4, $5, $6)"))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO borrowed_books(id, student_id, book_id, returned, created_at, updated_at) VALUES ($1, $2, $3,$4, $5, $6)"))
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (db *DbInstance) BorrowBook(bookId, studentId string) error {
 }
 
 func (db *DbInstance) ReturnBook(studentId, bookId string) error {
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE student_books SET returned = $1, updated_at = $2 WHERE student_id = $3 AND book_id = $4"))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE borrowed_books SET returned = $1, updated_at = $2 WHERE student_id = $3 AND book_id = $4"))
 	if err != nil {
 		return err
 	}
