@@ -1,0 +1,25 @@
+{{template "header.html"}}
+{{template "navbar.html"}}
+<br>
+<div class="container">
+    <div class="row">
+        {{range .Borrowed}}
+
+        <div class="col-4">
+            <div class="card book-card" style="width:400px">
+                <img class="card-img-top" style="width: auto; height: 550px" src="{{.BookUrl}}" alt="{{.Title}}">
+                <div class="card-body" style="text-align: center">
+                    <h4 class="card-title">{{.BookAuthor}}</h4>
+                    <p class="card-text">{{.BookTitle}}</p>
+                    <a href="/library/student/return-book/{{.StudentID}}/{{.BookTitle}}" class="btn btn-dark">Return</a>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <h1>No Books Borrowed</h1>
+        {{end}}
+    </div>
+
+</div>
+
+{{template "footer.html"}}
