@@ -7,6 +7,17 @@
     font-family: Georgia, serif;
 }
 
+.book-card{
+    margin-bottom: 20px;
+}
+
+.con{
+    display: block;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .forms{
     padding: 30px;
 }
