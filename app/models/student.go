@@ -47,3 +47,29 @@ func (db *DbInstance) ReturnBook(studentId, bookId string) error {
 	}
 	return nil
 }
+
+func (db DbInstance) GetBorrowedBooks(studentId string) ([]map[string]interface{}, error) {
+	var Bbooks []map[string]interface{}
+	row, err := db.Postgres.Query(fmt.Sprintf("SELECT s.id, s.first_name, s.last_name, k.id, k.title, k.author FROM (borrowed_books b INNER JOIN students s ON b.student_id = s.id) INNER JOIN books k ON k.id = b.book_id AND b.student_id = $1"), studentId)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+
+		var StudentID, FirstName, LastName, BookID, BookTitle, BookAuthor string
+		err = row.Scan(&StudentID, &FirstName, &LastName, &BookID, &BookTitle, &BookAuthor)
+		if err != nil {
+			return nil, err
+		}
+		borrowedBooks := map[string]interface{}{
+			"StudentID":  StudentID,
+			"FirstName":  FirstName,
+			"LastName":   LastName,
+			"BookID":     BookID,
+			"BookTitle":  BookTitle,
+			"BookAuthor": BookAuthor,
+		}
+		Bbooks = append(Bbooks, borrowedBooks)
+	}
+	return Bbooks, nil
+}
