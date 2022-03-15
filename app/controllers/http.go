@@ -48,7 +48,8 @@ func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"Books": books})
+		c.HTML(200, "library.books.html", gin.H{"Books": books})
+		//c.JSON(200, gin.H{"Books": books})
 	}
 }
 
@@ -65,8 +66,9 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"response": "Successfully checked in. Happy reading"})
+		//c.JSON(200, gin.H{"response": "Successfully checked in. Happy reading"})
 		helper.SaveSession(student.ID)
+		c.Redirect(302, "/library/book/get-all-books")
 	}
 }
 
