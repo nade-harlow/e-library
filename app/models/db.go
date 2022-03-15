@@ -10,6 +10,7 @@ type Db interface {
 	GetBook(title string) (Book, error)
 	ReturnBook(studentId, bookId string) error
 	BorrowBook(bookId, studentId string) error
+	GetBorrowedBooks(studentId string) ([]map[string]interface{}, error)
 	StudentCheckIn(s Student) error
 	CheckLendStatus(studentId, bookId string) error
 	GetAllLending() ([]BorrowedBook, error)
