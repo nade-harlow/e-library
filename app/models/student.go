@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"log"
 	"time"
 )
 
@@ -18,6 +19,17 @@ func (db *DbInstance) StudentCheckIn(s Student) error {
 		return err
 	}
 	return err
+}
+
+func (db DbInstance) GetStudentByName(first, last string) (Student, error) {
+	student := Student{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM students WHERE first_name = $1 AND last_name = $2"), first, last)
+	err := row.Scan(&student.ID, &student.FirstName, &student.LastName, &student.CreatedAt, &student.ModifiedAt)
+	if err != nil {
+		log.Println(err.Error())
+		return student, err
+	}
+	return student, nil
 }
 
 func (db *DbInstance) BorrowBook(bookId, studentId string) error {
