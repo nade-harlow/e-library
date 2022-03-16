@@ -13,6 +13,8 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	{
 		book.POST("/add-book", h.AddBook())
 		book.GET("/get-all-books", h.GetAllBooks())
+		book.POST("/search", h.Search())
+		book.GET("/search/result", h.Search())
 		book.PUT("/update/:book-title/:status", h.UpdateBookStatus())
 		book.DELETE("/delete/:book-id", h.DeleteBook())
 	}
