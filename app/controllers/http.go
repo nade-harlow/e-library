@@ -178,3 +178,14 @@ func (h NewHttp) DeleteBook() gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"response": "book has been deleted successfully"})
 	}
 }
+
+func (h NewHttp) Search() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		title := c.PostForm("book-title")
+		book, err := h.Db.GetBook(title)
+		if err != nil {
+			log.Println(err)
+		}
+		c.HTML(200, "search.result.html", book)
+	}
+}
