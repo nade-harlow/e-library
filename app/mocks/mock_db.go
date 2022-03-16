@@ -77,6 +77,21 @@ func (mr *MockDbMockRecorder) CheckBookAvailability(title interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckBookAvailability", reflect.TypeOf((*MockDb)(nil).CheckBookAvailability), title)
 }
 
+// CheckIfBorrowed mocks base method.
+func (m *MockDb) CheckIfBorrowed(studentID, bookID string) (models.BorrowedBook, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckIfBorrowed", studentID, bookID)
+	ret0, _ := ret[0].(models.BorrowedBook)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CheckIfBorrowed indicates an expected call of CheckIfBorrowed.
+func (mr *MockDbMockRecorder) CheckIfBorrowed(studentID, bookID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckIfBorrowed", reflect.TypeOf((*MockDb)(nil).CheckIfBorrowed), studentID, bookID)
+}
+
 // CheckLendStatus mocks base method.
 func (m *MockDb) CheckLendStatus(studentId, bookId string) error {
 	m.ctrl.T.Helper()
@@ -189,6 +204,36 @@ func (m *MockDb) GetBookByTitle(title string) (models.Book, error) {
 func (mr *MockDbMockRecorder) GetBookByTitle(title interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBookByTitle", reflect.TypeOf((*MockDb)(nil).GetBookByTitle), title)
+}
+
+// GetBorrowedBooks mocks base method.
+func (m *MockDb) GetBorrowedBooks(studentId string) ([]map[string]interface{}, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBorrowedBooks", studentId)
+	ret0, _ := ret[0].([]map[string]interface{})
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBorrowedBooks indicates an expected call of GetBorrowedBooks.
+func (mr *MockDbMockRecorder) GetBorrowedBooks(studentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBorrowedBooks", reflect.TypeOf((*MockDb)(nil).GetBorrowedBooks), studentId)
+}
+
+// GetStudentByName mocks base method.
+func (m *MockDb) GetStudentByName(first, last string) (models.Student, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStudentByName", first, last)
+	ret0, _ := ret[0].(models.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudentByName indicates an expected call of GetStudentByName.
+func (mr *MockDbMockRecorder) GetStudentByName(first, last interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentByName", reflect.TypeOf((*MockDb)(nil).GetStudentByName), first, last)
 }
 
 // ReturnBook mocks base method.
