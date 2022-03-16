@@ -1,4 +1,26 @@
 {{template "header.html"}}
 {{template "navbar.html"}}
+<br>
+{{if eq .Author ""}}
+<h1>No Record Found</h1>
+{{else}}
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <div class="card book-card" style="width:400px">
+                <img class="card-img-top" style="width: auto; height: 550px" src="{{.Url}}" alt="{{.Title}}">
+                <div class="card-body" style="text-align: center">
+                    <h4 class="card-title">{{.Author}}</h4>
+                    <p class="card-text">{{.Title}}</p>
+                    <a href="/library/book/search/{{.Title}}" class="btn btn-dark">Borrow</a>
+                </div>
+            </div>
+        </div>
 
-{{template "footer"}}
+    </div>
+
+</div>
+
+{{end}}
+
+{{template "footer.html"}}
