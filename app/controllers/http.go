@@ -72,12 +72,14 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			helper.SaveSession(student.ID)
-			c.Redirect(302, "/library/book/get-all-books")
+			//helper.SaveSession(student.ID)
+			c.SetCookie("session", student.ID, 3600, "/", "", true, true)
+			c.Redirect(http.StatusFound, "/library/book/get-all-books")
 			return
 		}
-		helper.SaveSession(data.ID)
-		c.Redirect(302, "/library/book/get-all-books")
+		c.SetCookie("session", data.ID, 3600, "/", "", true, true)
+		//helper.SaveSession(data.ID)
+		c.Redirect(http.StatusFound, "/library/book/get-all-books")
 	}
 }
 
@@ -86,7 +88,7 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 		student, exist := c.Get("student")
 		studentID := student.(string)
 		if !exist || studentID == "" {
-			c.Redirect(302, "/library/student/check-in")
+			c.Redirect(http.StatusFound, "/library/student/check-in")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "sorry, you have to check in first"})
 			return
 		}
@@ -101,7 +103,7 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.Redirect(302, "/library/book/get-all-books")
+		c.Redirect(http.StatusFound, "/library/book/get-all-books")
 		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
 	}
 }
@@ -120,7 +122,7 @@ func (h NewHttp) ReturnBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.Redirect(302, "/library/lend/get-lenders")
+		c.Redirect(http.StatusFound, "/library/lend/get-lenders")
 		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`Thank you for returning '%s'`, book.Title)})
 	}
 }
@@ -130,7 +132,7 @@ func (h NewHttp) GetAllBorrowedBooks() gin.HandlerFunc {
 		student, exist := c.Get("student")
 		studentID := student.(string)
 		if !exist || studentID == "" {
-			c.Redirect(302, "/library/student/check-in")
+			c.Redirect(http.StatusFound, "/library/student/check-in")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "sorry, you have to check in first"})
 			return
 		}
