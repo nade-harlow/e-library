@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type NewHttp struct {
@@ -53,9 +52,6 @@ func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 			return
 		}
 		c.HTML(200, "library.books.html", gin.H{"Books": books, "Message": message})
-		time.Sleep(3 * time.Second)
-		c.Redirect(http.StatusFound, "/library/book/get-all-books")
-		//c.JSON(200, gin.H{"Books": books})
 	}
 }
 
