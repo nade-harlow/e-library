@@ -8,6 +8,8 @@ import (
 	"github.com/nade-harlow/e-library/app/models"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 )
 
 type NewHttp struct {
@@ -44,12 +46,15 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 
 func (h *NewHttp) GetAllBooks() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		message := c.Param("message")
 		books, err := h.Db.GetAllBooks()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.HTML(200, "library.books.html", gin.H{"Books": books})
+		c.HTML(200, "library.books.html", gin.H{"Books": books, "Message": message})
+		time.Sleep(3 * time.Second)
+		c.Redirect(http.StatusFound, "/library/book/get-all-books")
 		//c.JSON(200, gin.H{"Books": books})
 	}
 }
@@ -100,11 +105,14 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 		}
 		err = h.Db.BorrowBook(book.ID, studentID)
 		if err != nil {
+			message := "you've already borrowed this book"
+			c.Redirect(http.StatusFound, fmt.Sprintf("/library/book/get-all-books/%s", message))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.Redirect(http.StatusFound, "/library/book/get-all-books")
-		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
+		message := fmt.Sprintf(`you just borrowed %s by %s`, strings.ToTitle(book.Title), strings.ToTitle(book.Author))
+		c.Redirect(http.StatusFound, fmt.Sprintf("/library/book/get-all-books/%s", message))
+		//c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
 	}
 }
 
