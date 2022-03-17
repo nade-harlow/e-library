@@ -26,6 +26,12 @@ func (h NewHttp) Home() gin.HandlerFunc {
 	}
 }
 
+func (h NewHttp) Book() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(200, "add.books.html", nil)
+	}
+}
+
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
