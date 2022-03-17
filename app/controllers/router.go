@@ -9,9 +9,9 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	//r.Use(middleware.Session())
 	r.Use(gin.Recovery())
 	r.GET("/", h.Home())
+	r.GET("library/admin/add-book", h.Book())
 	book := r.Group("library/book", middleware.Session())
 	{
-		book.GET("/admin/add-book", h.Book())
 		book.POST("/add-book", h.AddBook())
 		book.GET("/get-all-books/:message", h.GetAllBooks())
 		book.GET("/get-all-books", h.GetAllBooks())
