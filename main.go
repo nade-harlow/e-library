@@ -18,9 +18,12 @@ func main() {
 	dbInstance := models.NewInstance(db)
 	Newhttp := controllers.New(dbInstance)
 	Newhttp.Routes(router)
-	port := os.Getenv("DB_HOST")
+	port := ":" + os.Getenv("PORT")
+	if port == ":" {
+		port += "8080"
+	}
 	log.Printf("Server listening on port %s\n", port)
-	err := router.Run()
+	err := router.Run(port)
 	if err != nil {
 		log.Fatalf("server failed to listen on port %s", port)
 	}
