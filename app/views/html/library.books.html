@@ -2,6 +2,15 @@
 {{template "navbar.html"}}
 <br>
 <div class="container">
+    {{if eq .Message ""}}
+    <span></span>
+    {{else}}
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span>{{.Message}}</span>
+    </div>
+
+    {{end}}
     <div class="row">
         {{range .Books}}
 
