@@ -6,10 +6,10 @@ import (
 )
 
 func (h *NewHttp) Routes(r *gin.Engine) {
-	r.Use(middleware.Session())
+	//r.Use(middleware.Session())
 	r.Use(gin.Recovery())
 	r.GET("/", h.Home())
-	book := r.Group("library/book")
+	book := r.Group("library/book", middleware.Session())
 	{
 		book.POST("/add-book", h.AddBook())
 		book.GET("/get-all-books", h.GetAllBooks())
@@ -19,7 +19,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		book.DELETE("/delete/:book-id", h.DeleteBook())
 	}
 
-	student := r.Group("library/student")
+	student := r.Group("library/student", middleware.Session())
 	{
 		student.GET("/borrow/:book-title", h.BorrowBook())
 		student.GET("/return-book/:student-id/:book-title", h.ReturnBook())
@@ -27,7 +27,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		student.POST("/check-in", h.CheckIn())
 	}
 
-	lend := r.Group("library/lend")
+	lend := r.Group("library/lend", middleware.Session())
 	{
 		lend.GET("/get-lenders", h.GetAllBorrowedBooks())
 	}
