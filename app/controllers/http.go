@@ -29,12 +29,10 @@ func (h NewHttp) Home() gin.HandlerFunc {
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
-		err := c.ShouldBindJSON(&book)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		err = h.Db.AddBook(book)
+		book.Title = c.PostForm("title")
+		book.Author = c.PostForm("author")
+		book.Url = c.PostForm("url")
+		err := h.Db.AddBook(book)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
