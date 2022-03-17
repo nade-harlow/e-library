@@ -73,13 +73,11 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			//helper.SaveSession(student.ID)
 			c.SetCookie("session", student.ID, 3600, "/", "", true, true)
 			c.Redirect(http.StatusFound, "/library/book/get-all-books")
 			return
 		}
 		c.SetCookie("session", data.ID, 3600, "/", "", true, true)
-		//helper.SaveSession(data.ID)
 		c.Redirect(http.StatusFound, "/library/book/get-all-books")
 	}
 }
@@ -108,7 +106,6 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 		}
 		message := fmt.Sprintf(`you just borrowed %s by %s`, strings.ToTitle(book.Title), strings.ToTitle(book.Author))
 		c.Redirect(http.StatusFound, fmt.Sprintf("/library/book/get-all-books/%s", message))
-		//c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`you just borrowed '%s' by '%s'`, book.Title, book.Author)})
 	}
 }
 
@@ -146,7 +143,6 @@ func (h NewHttp) GetAllBorrowedBooks() gin.HandlerFunc {
 			return
 		}
 		c.HTML(200, "return.book.portal.html", gin.H{"Borrowed": books})
-		//c.JSON(http.StatusOK, gin.H{"Lenders": books})
 	}
 }
 
