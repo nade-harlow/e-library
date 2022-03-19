@@ -141,14 +141,13 @@ func TestNewHttp_CheckIn(t *testing.T) {
 	mdb := db.NewMockDb(ctrl)
 	router := Loader(mdb)
 	mdb.EXPECT().GetStudentByName("jim", "morrison").Return(models.Student{}, nil)
-	mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(errors.New("error checking student in"))
-	//mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(nil)
+	mdb.EXPECT().StudentCheckIn(gomock.Any()).Return(nil)
 
 	form := url.Values{}
 	form.Set("first_name", "jim")
 	form.Set("last_name", "morrison")
 
-	t.Run("testing error checking student in", func(t *testing.T) {
+	t.Run("testing checking student in success", func(t *testing.T) {
 		request, err := http.NewRequest(http.MethodPost, "/library/student/check-in", strings.NewReader(form.Encode()))
 		if err != nil {
 			t.Fatal(err)
@@ -157,27 +156,10 @@ func TestNewHttp_CheckIn(t *testing.T) {
 		response := httptest.NewRecorder()
 		router.ServeHTTP(response, request)
 
-		if response.Code != http.StatusInternalServerError {
-			t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, response.Code)
+		if response.Code != http.StatusFound {
+			t.Errorf("Expected status code %d, got %d", http.StatusFound, response.Code)
 		}
 	})
-
-	//t.Run("testing checking student in success", func(t *testing.T) {
-	//	request, err := http.NewRequest(http.MethodPost, "/library/student/check-in", strings.NewReader(form.Encode()))
-	//	if err != nil {
-	//		t.Fatal(err)
-	//	}
-	//	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	//	response := httptest.NewRecorder()
-	//	router.ServeHTTP(response, request)
-	//
-	//	if response.Code != http.StatusFound {
-	//		t.Errorf("Expected status code %d, got %d", http.StatusFound, response.Code)
-	//	}
-	//	//if string(response.Body.Bytes()) != string(res) {
-	//	//	t.Errorf("Expected %s, got %s", `{"response": "Successfully checked in. Happy reading"}`, string(response.Body.Bytes()))
-	//	//}
-	//})
 
 }
 
