@@ -10,7 +10,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	r.Use(gin.Recovery())
 	r.GET("/", h.Home())
 	r.GET("library/admin/add-book", h.Book())
-	book := r.Group("library/book", middleware.Session())
+	book := r.Group("library/book")
 	{
 		book.POST("/add-book", h.AddBook())
 		book.GET("/get-all-books/:message", h.GetAllBooks())
@@ -21,15 +21,15 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		book.DELETE("/delete/:book-id", h.DeleteBook())
 	}
 
-	student := r.Group("library/student", middleware.Session())
+	student := r.Group("library/student")
 	{
-		student.GET("/borrow/:book-title", h.BorrowBook())
-		student.GET("/return-book/:student-id/:book-title", h.ReturnBook())
+		student.GET("/borrow/:book-title", middleware.Session(), h.BorrowBook())
+		student.GET("/return-book/:student-id/:book-title", middleware.Session(), h.ReturnBook())
 		student.GET("/check-in", h.Home())
 		student.POST("/check-in", h.CheckIn())
 	}
 
-	lend := r.Group("library/lend", middleware.Session())
+	lend := r.Group("library/lend")
 	{
 		lend.GET("/get-lenders", h.GetAllBorrowedBooks())
 	}
