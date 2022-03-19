@@ -10,26 +10,27 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	r.Use(gin.Recovery())
 	r.GET("/", h.Home())
 	r.GET("library/admin/add-book", h.Book())
-	book := r.Group("library/book")
+	r.GET("library/book/get-all-books/:message", h.GetAllBooks())
+	r.GET("library/book/get-all-books", h.GetAllBooks())
+	book := r.Group("library/book", middleware.Session())
 	{
 		book.POST("/add-book", h.AddBook())
-		book.GET("/get-all-books/:message", h.GetAllBooks())
-		book.GET("/get-all-books", h.GetAllBooks())
+
 		book.POST("/search", h.Search())
 		book.GET("/search/result", h.Search())
 		book.PUT("/update/:book-title/:status", h.UpdateBookStatus())
 		book.DELETE("/delete/:book-id", h.DeleteBook())
 	}
 
-	student := r.Group("library/student")
+	student := r.Group("library/student", middleware.Session())
 	{
-		student.GET("/borrow/:book-title", middleware.Session(), h.BorrowBook())
-		student.GET("/return-book/:student-id/:book-title", middleware.Session(), h.ReturnBook())
+		student.GET("/borrow/:book-title", h.BorrowBook())
+		student.GET("/return-book/:student-id/:book-title", h.ReturnBook())
 		student.GET("/check-in", h.Home())
 		student.POST("/check-in", h.CheckIn())
 	}
 
-	lend := r.Group("library/lend")
+	lend := r.Group("library/lend", middleware.Session())
 	{
 		lend.GET("/get-lenders", h.GetAllBorrowedBooks())
 	}
