@@ -31,24 +31,16 @@ func TestNewHttp_AddBook(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mdb := db.NewMockDb(ctrl)
 	router := Loader(mdb)
+	form := url.Values{}
+	form.Set("title", "women of owo")
+	form.Set("author", "kwame")
+	form.Set("url", "something.com")
 
-	book := models.Book{
-		ID:         "1",
-		Title:      "women of owo",
-		Author:     "kwame",
-		Available:  true,
-		CreatedAt:  "1pm",
-		ModifiedAt: "1pm",
-	}
-	mdb.EXPECT().AddBook(book).Return(errors.New("can't insert to db"))
-	mdb.EXPECT().AddBook(book).Return(nil)
-	body, err := json.Marshal(&book)
-	if err != nil {
-		t.Fail()
-		return
-	}
+	mdb.EXPECT().AddBook(gomock.Any()).Return(errors.New("can't insert to db"))
+	mdb.EXPECT().AddBook(gomock.Any()).Return(nil)
+
 	t.Run("testing error", func(t *testing.T) {
-		request, err := http.NewRequest(http.MethodPost, "/library/book/add-book", strings.NewReader(string(body)))
+		request, err := http.NewRequest(http.MethodPost, "/library/book/add-book", strings.NewReader(form.Encode()))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -68,23 +60,18 @@ func TestNewHttp_AddBook(t *testing.T) {
 	})
 
 	t.Run("testing no error", func(t *testing.T) {
-		request, err := http.NewRequest(http.MethodPost, "/library/book/add-book", strings.NewReader(string(body)))
+		request, err := http.NewRequest(http.MethodPost, "/library/book/add-book", strings.NewReader(form.Encode()))
 		if err != nil {
 			t.Fatal(err)
 		}
-		request.Header.Set("Content-Type", "application/json")
+		request.Header.Set("Content-Type", "text/html")
 		response := httptest.NewRecorder()
 		router.ServeHTTP(response, request)
-		res, err := json.Marshal(gin.H{"message": "book added successfully"})
-		if err != nil {
-			t.Fatal(err)
-		}
+
 		if response.Code != http.StatusOK {
 			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
 		}
-		if string(response.Body.Bytes()) != string(res) {
-			t.Errorf("Expected %s, got %s", `{"message":"book added successfully"}`, string(response.Body.Bytes()))
-		}
+
 	})
 
 }
