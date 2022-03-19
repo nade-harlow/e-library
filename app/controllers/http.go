@@ -137,7 +137,9 @@ func (h NewHttp) GetAllBorrowedBooks() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//studentID:= "1"
 		student, exist := c.Get("student")
+		log.Println(student)
 		studentID := student.(string)
+
 		if !exist || studentID == "" {
 			c.Redirect(http.StatusFound, "/library/student/check-in")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "sorry, you have to check in first"})
