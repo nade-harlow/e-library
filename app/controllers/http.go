@@ -88,6 +88,7 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 
 func (h NewHttp) BorrowBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		//studentID:= "1"
 		student, exist := c.Get("student")
 		studentID := student.(string)
 		if !exist || studentID == "" {
@@ -134,6 +135,7 @@ func (h NewHttp) ReturnBook() gin.HandlerFunc {
 
 func (h NewHttp) GetAllBorrowedBooks() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		//studentID:= "1"
 		student, exist := c.Get("student")
 		studentID := student.(string)
 		if !exist || studentID == "" {
