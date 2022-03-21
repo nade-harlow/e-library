@@ -7,14 +7,14 @@ import (
 
 func (db *DbInstance) GetAllLending(returned bool) ([]map[string]interface{}, error) {
 	var Bbooks []map[string]interface{}
-	row, err := db.Postgres.Query(fmt.Sprintf("SELECT s.id, s.first_name, s.last_name, k.id, k.title, k.author, k.url FROM (borrowed_books b INNER JOIN students s ON b.student_id = s.id) INNER JOIN books k ON k.id = b.book_id AND b.returned = $1"), returned)
+	row, err := db.Postgres.Query(fmt.Sprintf("SELECT s.id, s.first_name, s.last_name, k.id, k.title, k.author, k.url, b.created_at FROM (borrowed_books b INNER JOIN students s ON b.student_id = s.id) INNER JOIN books k ON k.id = b.book_id AND b.returned = $1 ORDER BY b.created_at DESC"), returned)
 	if err != nil {
 		return nil, err
 	}
 	for row.Next() {
 
-		var StudentID, FirstName, LastName, BookID, BookTitle, BookAuthor, BookUrl string
-		err = row.Scan(&StudentID, &FirstName, &LastName, &BookID, &BookTitle, &BookAuthor, &BookUrl)
+		var StudentID, FirstName, LastName, BookID, BookTitle, BookAuthor, BookUrl, BookTime string
+		err = row.Scan(&StudentID, &FirstName, &LastName, &BookID, &BookTitle, &BookAuthor, &BookUrl, &BookTime)
 		if err != nil {
 			return nil, err
 		}
@@ -26,6 +26,7 @@ func (db *DbInstance) GetAllLending(returned bool) ([]map[string]interface{}, er
 			"BookTitle":  BookTitle,
 			"BookAuthor": BookAuthor,
 			"BookUrl":    BookUrl,
+			"BookTime":   BookTime[:16],
 		}
 		Bbooks = append(Bbooks, borrowedBooks)
 	}
