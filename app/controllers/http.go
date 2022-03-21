@@ -43,7 +43,8 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"message": "book added successfully"})
+		c.Redirect(http.StatusFound, "/library/admin/books")
+		//c.JSON(200, gin.H{"message": "book added successfully"})
 	}
 }
 
