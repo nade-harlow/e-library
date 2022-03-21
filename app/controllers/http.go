@@ -184,7 +184,8 @@ func (h NewHttp) DeleteBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"response": "book has been deleted successfully"})
+		message := "Book Removed From Library Successfully"
+		c.Redirect(http.StatusFound, fmt.Sprintf("/library/admin/books/%s", message))
 	}
 }
 
