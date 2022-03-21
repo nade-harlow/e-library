@@ -28,7 +28,7 @@ func (h NewHttp) Home() gin.HandlerFunc {
 
 func (h NewHttp) Book() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(200, "add.books.html", nil)
+		c.HTML(200, "admin.add.books.html", nil)
 	}
 }
 
@@ -196,5 +196,20 @@ func (h NewHttp) Search() gin.HandlerFunc {
 			log.Println(err)
 		}
 		c.HTML(200, "search.result.html", book)
+	}
+}
+
+func (h NewHttp) GetLendingHistory() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var returned bool
+		filter := strings.ToLower(c.PostForm("filter"))
+		if filter == "returned" {
+			returned = true
+		}
+		allLending, err := h.Db.GetAllLending(returned)
+		if err != nil {
+			return
+		}
+		c.HTML(200, "admin.books.history.html", gin.H{"History": allLending})
 	}
 }
