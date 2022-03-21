@@ -1,0 +1,36 @@
+{{template "header.html"}}
+{{template "admin.navbar.html"}}
+<div class="container mt-3">
+    <h2>Lending History</h2>
+    <form  action="/library/admin/books/history" method="post">
+        <label class="form-label">Sort by:</label>
+        <select class="form-select-sm" name="filter">
+            <option>Returned</option>
+            <option>Not returned</option>
+        </select>
+        <button type="submit" class="btn btn-dark">Filter</button>
+    </form>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+    {{range .History}}
+        <tr>
+            <td>{{.FirstName}}</td>
+            <td>{{.LastName}}</td>
+            <td>{{.BookTitle}}</td>
+            <td>{{.BookAuthor}}</td>
+            <td>{{.BookTime}}</td>
+        </tr>
+    {{end}}
+        </tbody>
+    </table>
+</div>
+{{template "footer.html"}}
