@@ -5,21 +5,31 @@ import (
 	"fmt"
 )
 
-func (db *DbInstance) GetAllLending() ([]BorrowedBook, error) {
-	var books []BorrowedBook
-	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM student_books"))
+func (db *DbInstance) GetAllLending(returned bool) ([]map[string]interface{}, error) {
+	var Bbooks []map[string]interface{}
+	row, err := db.Postgres.Query(fmt.Sprintf("SELECT s.id, s.first_name, s.last_name, k.id, k.title, k.author, k.url FROM (borrowed_books b INNER JOIN students s ON b.student_id = s.id) INNER JOIN books k ON k.id = b.book_id AND b.returned = $1"), returned)
 	if err != nil {
 		return nil, err
 	}
 	for row.Next() {
-		book := BorrowedBook{}
-		err = row.Scan(&book.ID, &book.StudentID, &book.BookID, &book.Returned, &book.CreatedAt, &book.ModifiedAt)
+
+		var StudentID, FirstName, LastName, BookID, BookTitle, BookAuthor, BookUrl string
+		err = row.Scan(&StudentID, &FirstName, &LastName, &BookID, &BookTitle, &BookAuthor, &BookUrl)
 		if err != nil {
 			return nil, err
 		}
-		books = append(books, book)
+		borrowedBooks := map[string]interface{}{
+			"StudentID":  StudentID,
+			"FirstName":  FirstName,
+			"LastName":   LastName,
+			"BookID":     BookID,
+			"BookTitle":  BookTitle,
+			"BookAuthor": BookAuthor,
+			"BookUrl":    BookUrl,
+		}
+		Bbooks = append(Bbooks, borrowedBooks)
 	}
-	return books, nil
+	return Bbooks, nil
 }
 
 func (db *DbInstance) CheckLendStatus(studentId, bookId string) error {
