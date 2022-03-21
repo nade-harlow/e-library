@@ -213,3 +213,16 @@ func (h NewHttp) GetLendingHistory() gin.HandlerFunc {
 		c.HTML(200, "admin.books.history.html", gin.H{"History": allLending})
 	}
 }
+
+// GetAllLibraryBooks Admin portal
+func (h *NewHttp) GetAllLibraryBooks() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		message := c.Param("message")
+		books, err := h.Db.GetAllBooks()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.HTML(200, "admin.all.books.html", gin.H{"Books": books, "Message": message})
+	}
+}
