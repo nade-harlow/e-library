@@ -1,23 +1,23 @@
 {{template "header.html"}}
-
+{{template "admin.navbar.html"}}
 <div class="container" >
     <div class="card" id="top">
         <form class="forms" action="/library/book/add-book" method="post">
             <div class="check-in"><h3>Add Book</h3></div>
             <div class="mb-3">
-                <label for="Title" class="form-label">Title</label>
+                <label class="form-label">Title</label>
                 <input type="text" class="form-control" name="title">
             </div>
             <div class="mb-3">
-                <label for="Author" class="form-label">Author</label>
+                <label class="form-label">Author</label>
                 <input type="text" class="form-control" name="author">
             </div>
             <div class="mb-3">
-                <label for="Picture" class="form-label">Picture url</label>
+                <label class="form-label">Picture url</label>
                 <input type="text" class="form-control" name="url">
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
         </form>
     </div>
 
