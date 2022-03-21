@@ -12,6 +12,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	r.GET("library/admin/add-book", h.Book())
 	r.GET("library/admin/books/history", h.GetLendingHistory())
 	r.POST("library/admin/books/history", h.GetLendingHistory())
+	r.GET("library/admin/books", h.GetAllLibraryBooks())
 	r.GET("library/book/get-all-books/:message", h.GetAllBooks())
 	r.GET("library/book/get-all-books", h.GetAllBooks())
 	book := r.Group("library/book", middleware.Session())
