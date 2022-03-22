@@ -41,4 +41,8 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		student.POST("/check-in", h.CheckIn())
 	}
 
+	lend := r.Group("library/lend", middleware.Session())
+	{
+		lend.GET("/get-lenders", h.GetAllBorrowedBooks())
+	}
 }
