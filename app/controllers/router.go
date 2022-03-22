@@ -17,6 +17,9 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	r.GET("library/book/get-all-books/:message", h.GetAllBooks())
 	r.GET("library/admin/books/delete/:book-id", h.DeleteBook())
 	r.GET("library/book/get-all-books", h.GetAllBooks())
+	r.NoRoute(func(c *gin.Context) {
+		c.HTML(200, "404.page.html", nil)
+	})
 	book := r.Group("library/book", middleware.Session())
 	{
 		book.POST("/add-book", h.AddBook())
