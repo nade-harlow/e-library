@@ -6,20 +6,22 @@ import (
 )
 
 func (h *NewHttp) Routes(r *gin.Engine) {
-	//r.Use(middleware.Session())
 	r.Use(gin.Recovery())
 	r.GET("/", h.Home())
-	r.GET("library/admin/add-book", h.Book())
-	r.GET("library/admin/books/history", h.GetLendingHistory())
-	r.POST("library/admin/books/history", h.GetLendingHistory())
-	r.GET("library/admin/books", h.GetAllLibraryBooks())
-	r.GET("library/admin/books/:message", h.GetAllLibraryBooks())
+	admin := r.Group("library/admin")
+	{
+		admin.GET("/add-book", h.Book())
+		admin.GET("/books/history", h.GetLendingHistory())
+		admin.POST("/books/history", h.GetLendingHistory())
+		admin.GET("/books", h.GetAllLibraryBooks())
+		admin.GET("/books/:message", h.GetAllLibraryBooks())
+		admin.GET("/books/delete/:book-id", h.DeleteBook())
+	}
+
 	r.GET("library/book/get-all-books/:message", h.GetAllBooks())
-	r.GET("library/admin/books/delete/:book-id", h.DeleteBook())
 	r.GET("library/book/get-all-books", h.GetAllBooks())
-	r.NoRoute(func(c *gin.Context) {
-		c.HTML(200, "404.page.html", nil)
-	})
+	r.NoRoute(func(c *gin.Context) { c.HTML(200, "404.page.html", nil) })
+
 	book := r.Group("library/book", middleware.Session())
 	{
 		book.POST("/add-book", h.AddBook())
