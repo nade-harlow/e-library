@@ -11,6 +11,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	admin := r.Group("library/admin")
 	{
 		admin.GET("/", h.GetAllLibraryBooks())
+		admin.GET("/books", h.GetAllLibraryBooks())
 		admin.GET("/add-book", h.Book())
 		admin.GET("/books/history", h.GetLendingHistory())
 		admin.POST("/books/history", h.GetLendingHistory())
