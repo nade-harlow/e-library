@@ -32,6 +32,13 @@ func (h NewHttp) Book() gin.HandlerFunc {
 	}
 }
 
+func (h NewHttp) Logout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.SetCookie("session", "", -1, "", "", true, true)
+		c.Redirect(http.StatusFound, "/library/books/get-all-books")
+	}
+}
+
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
