@@ -150,18 +150,18 @@ func (mr *MockDbMockRecorder) GetAllBooks() *gomock.Call {
 }
 
 // GetAllLending mocks base method.
-func (m *MockDb) GetAllLending() ([]models.BorrowedBook, error) {
+func (m *MockDb) GetAllLending(returned bool) ([]map[string]interface{}, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllLending")
-	ret0, _ := ret[0].([]models.BorrowedBook)
+	ret := m.ctrl.Call(m, "GetAllLending", returned)
+	ret0, _ := ret[0].([]map[string]interface{})
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllLending indicates an expected call of GetAllLending.
-func (mr *MockDbMockRecorder) GetAllLending() *gomock.Call {
+func (mr *MockDbMockRecorder) GetAllLending(returned interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllLending", reflect.TypeOf((*MockDb)(nil).GetAllLending))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllLending", reflect.TypeOf((*MockDb)(nil).GetAllLending), returned)
 }
 
 // GetBook mocks base method.
