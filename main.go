@@ -1,30 +1,15 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv"
-	"github.com/nade-harlow/e-library/app/controllers"
-	"github.com/nade-harlow/e-library/app/models"
+	"github.com/nade-harlow/e-library/app/controllers/server"
 	"log"
-	"net/http"
-	"os"
 )
 
 func main() {
-	router := gin.Default()
-	router.StaticFS("static", http.Dir("app/views/static"))
-	router.LoadHTMLGlob("app/views/html/*")
-	db := models.Init()
-	dbInstance := models.NewInstance(db)
-	Newhttp := controllers.New(dbInstance)
-	Newhttp.Routes(router)
-	port := ":" + os.Getenv("PORT")
-	if port == ":" {
-		port += "8080"
+	if err := godotenv.Load(); err != nil {
+		log.Println("Error loading .env file")
 	}
-	log.Printf("Server listening on port %s\n", port)
-	err := router.Run(port)
-	if err != nil {
-		log.Fatalf("server failed to listen on port %s", port)
-	}
+	server.Start()
 }
