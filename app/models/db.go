@@ -13,6 +13,7 @@ type Db interface {
 	GetBorrowedBooks(studentId string) ([]map[string]interface{}, error)
 	StudentCheckIn(s Student) error
 	StudentSignUp(s Student) error
+	StudentLogin(username, password string) (Student, error)
 	CheckIfBorrowed(studentID, bookID string) (BorrowedBook, error)
 	GetStudentByName(first, last string) (Student, error)
 	CheckLendStatus(studentId, bookId string) error
