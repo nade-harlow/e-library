@@ -39,6 +39,29 @@ func (h NewHttp) Logout() gin.HandlerFunc {
 	}
 }
 
+func (h NewHttp) Login() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(200, "signup.html", nil)
+	}
+}
+
+func (h NewHttp) LoginAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//user_name:= c.PostForm("user_name")
+		//password:= c.PostForm("password")
+		title := c.PostFormArray("title")
+		author := c.PostFormArray("author")
+		url := c.PostFormArray("url")
+		stock := c.PostFormArray("stock")
+		log.Println("title", title)
+		log.Println("author", author)
+		log.Println("url", url)
+		log.Println("stock", stock)
+
+		c.Redirect(http.StatusFound, "/library/lend/get-lenders")
+	}
+}
+
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
@@ -72,8 +95,12 @@ func (h *NewHttp) CheckIn() gin.HandlerFunc {
 		student := models.Student{}
 		firstName := c.PostForm("first_name")
 		lastName := c.PostForm("last_name")
+		userName := c.PostForm("user_name")
+		password := c.PostForm("password")
 		student.FirstName = firstName
 		student.LastName = lastName
+		student.UserName = userName
+		student.Password = password
 		student.ID = uuid.NewString()
 		data, err := h.Db.GetStudentByName(firstName, lastName)
 		if err != nil {
