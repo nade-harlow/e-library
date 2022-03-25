@@ -20,11 +20,11 @@ func (db *DbInstance) AddBook(book Book) error {
 	if exist != "" {
 		return errors.New(fmt.Sprintf(`'%s' Already exist in library`, book.Title))
 	}
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO books (id, title, author, url, available, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO books (id, title, author, url, available, stock, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"))
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(book.ID, book.Title, book.Author, book.Url, book.Available, book.CreatedAt, book.ModifiedAt)
+	_, err = stmt.Exec(book.ID, book.Title, book.Author, book.Url, book.Available, book.StockCount, book.CreatedAt, book.ModifiedAt)
 	if err != nil {
 		return err
 	}
