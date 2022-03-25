@@ -68,9 +68,23 @@ func (h NewHttp) SignUp() gin.HandlerFunc {
 	}
 }
 
-func (h NewHttp) SignUpAuth() gin.HandlerFunc {
+func (h *NewHttp) SignUpAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(200, "signup.html", nil)
+		var student models.Student
+		student.FirstName = strings.ToLower(c.PostForm("first_name"))
+		student.LastName = strings.ToLower(c.PostForm("last_name"))
+		student.UserName = strings.ToLower(c.PostForm("user_name"))
+		student.Password = c.PostForm("password")
+		confirmPassword := c.PostForm("c_password")
+		if student.Password != confirmPassword {
+			// TODO: handle constraints
+			return
+		}
+		if err := h.Db.StudentSignUp(student); err != nil {
+			// TODO: handle constraints
+			return
+		}
+		c.Redirect(http.StatusFound, "/library/login")
 	}
 }
 
@@ -86,7 +100,6 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 			return
 		}
 		c.Redirect(http.StatusFound, "/library/admin/books")
-		//c.JSON(200, gin.H{"message": "book added successfully"})
 	}
 }
 
