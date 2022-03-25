@@ -39,7 +39,7 @@ func (db *DbInstance) GetAllBooks() ([]Book, error) {
 	}
 	for row.Next() {
 		book := Book{}
-		err = row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+		err = row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.StockCount, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +80,7 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 		return book, errors.New(fmt.Sprintf(`'%s' is no longer in shelf`, title))
 	}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
-	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.StockCount, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return book, err
