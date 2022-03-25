@@ -22,7 +22,7 @@ func New(model models.Db) *NewHttp {
 
 func (h NewHttp) Home() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(200, "student.checkin.html", nil)
+		c.HTML(200, "login.html", nil)
 	}
 }
 
@@ -41,7 +41,7 @@ func (h NewHttp) Logout() gin.HandlerFunc {
 
 func (h NewHttp) Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(200, "signup.html", nil)
+		c.HTML(200, "login.html", nil)
 	}
 }
 
@@ -78,10 +78,12 @@ func (h *NewHttp) SignUpAuth() gin.HandlerFunc {
 		confirmPassword := c.PostForm("c_password")
 		if student.Password != confirmPassword {
 			// TODO: handle constraints
+			log.Println("password doesn't match")
 			return
 		}
 		if err := h.Db.StudentSignUp(student); err != nil {
 			// TODO: handle constraints
+			log.Println("signup error", err.Error())
 			return
 		}
 		c.Redirect(http.StatusFound, "/library/login")
