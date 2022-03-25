@@ -71,6 +71,7 @@ func (h NewHttp) SignUp() gin.HandlerFunc {
 func (h *NewHttp) SignUpAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var student models.Student
+		student.ID = uuid.NewString()
 		student.FirstName = strings.ToLower(c.PostForm("first_name"))
 		student.LastName = strings.ToLower(c.PostForm("last_name"))
 		student.UserName = strings.ToLower(c.PostForm("user_name"))
