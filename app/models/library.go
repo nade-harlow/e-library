@@ -5,7 +5,7 @@ type Book struct {
 	Title      string `json:"title"`
 	Author     string `json:"author"`
 	Url        string `json:"url"`
-	StockCount int    `json:"stock_count"`
+	StockCount int    `json:"stock_count"` //
 	Available  bool   `json:"available"`
 	CreatedAt  string `json:"created_at"`
 	ModifiedAt string `json:"modified_at"`
@@ -13,10 +13,10 @@ type Book struct {
 
 type Student struct {
 	ID         string `json:"id"`
-	UserName   string `json:"user_name"`
+	UserName   string `json:"user_name"` //
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
-	Password   string `json:"password"`
+	Password   string `json:"password"` //
 	CreatedAt  string `json:"created_at"`
 	ModifiedAt string `json:"modified_at"`
 }
