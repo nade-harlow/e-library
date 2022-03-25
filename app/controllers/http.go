@@ -62,6 +62,18 @@ func (h NewHttp) LoginAuth() gin.HandlerFunc {
 	}
 }
 
+func (h NewHttp) SignUp() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(200, "signup.html", nil)
+	}
+}
+
+func (h NewHttp) SignUpAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(200, "signup.html", nil)
+	}
+}
+
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
