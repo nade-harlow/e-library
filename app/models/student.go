@@ -23,6 +23,17 @@ func (db *DbInstance) StudentSignUp(s Student) error {
 	return err
 }
 
+func (db DbInstance) StudentLogin(username, password string) (Student, error) {
+	student := Student{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT id, username, first_name FROM students WHERE username = $1 AND password = $2"), username, password)
+	err := row.Scan(&student.ID, &student.UserName, &student.FirstName)
+	if err != nil {
+		log.Println(err.Error())
+		return student, err
+	}
+	return student, nil
+}
+
 func (db *DbInstance) StudentCheckIn(s Student) error {
 	s.FirstName = strings.ToLower(s.FirstName)
 	s.LastName = strings.ToLower(s.LastName)
