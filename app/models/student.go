@@ -12,11 +12,11 @@ import (
 func (db *DbInstance) StudentCheckIn(s Student) error {
 	s.FirstName = strings.ToLower(s.FirstName)
 	s.LastName = strings.ToLower(s.LastName)
-	stm, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO students (id, first_name, last_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)"))
+	stm, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO students (id, first_name, last_name, user_name, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"))
 	if err != nil {
 		return err
 	}
-	_, err = stm.Exec(s.ID, s.FirstName, s.LastName, time.Now().String(), time.Now().String())
+	_, err = stm.Exec(s.ID, s.FirstName, s.LastName, s.UserName, s.Password, time.Now().String(), time.Now().String())
 	if err != nil {
 		return err
 	}
@@ -25,8 +25,19 @@ func (db *DbInstance) StudentCheckIn(s Student) error {
 
 func (db DbInstance) GetStudentByName(first, last string) (Student, error) {
 	student := Student{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM students WHERE first_name = $1 AND last_name = $2"), first, last)
-	err := row.Scan(&student.ID, &student.FirstName, &student.LastName, &student.CreatedAt, &student.ModifiedAt)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT id, first_name, last_name, user_name, created_at FROM students WHERE first_name = $1 AND last_name = $2"), first, last)
+	err := row.Scan(&student.ID, &student.FirstName, &student.LastName, &student.UserName, &student.CreatedAt)
+	if err != nil {
+		log.Println(err.Error())
+		return student, err
+	}
+	return student, nil
+}
+
+func (db DbInstance) GetStudentByUserName(userName string) (Student, error) {
+	student := Student{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT id, first_name, last_name, user_name, created_at FROM students WHERE user_name = $1"), userName)
+	err := row.Scan(&student.ID, &student.FirstName, &student.LastName, &student.UserName, &student.CreatedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return student, err
