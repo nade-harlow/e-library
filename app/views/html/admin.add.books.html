@@ -2,19 +2,32 @@
 {{template "admin.navbar.html"}}
 <div class="container" >
     <div class="card" id="top">
-        <form class="forms" action="/library/book/add-book" method="post">
+        <form class="forms" action="/library/signup/auth" method="post" id="form">
             <div class="check-in"><h3>Add Book</h3></div>
+            <input type="text" id="item"><button type="button" id="insert">Insert</button>
             <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input type="text" class="form-control" name="title">
+                <br>
+                <span id="title"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Author</label>
                 <input type="text" class="form-control" name="author">
+                <br>
+                <span id="author"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Picture url</label>
                 <input type="text" class="form-control" name="url">
+                <br>
+                <span id="url"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" class="form-control" name="stock" min="1" max="5">
+                <br>
+                <span id="stock"></span>
             </div>
 
             <button type="submit" class="btn btn-dark">Submit</button>
@@ -22,5 +35,29 @@
     </div>
 
 </div>
+
+<script>
+    let num = 0;
+    let item = document.getElementById('item');
+    let title = document.getElementById('title');
+    let author = document.getElementById('author');
+    let url = document.getElementById('url');
+    let stock = document.getElementById('stock');
+    let button = document.getElementById('insert');
+
+    button.addEventListener('click', function(e) {
+        e.preventDefault()
+        for (let i = 0; i < item.value; i++) {
+            num++;
+            if (num < 5){
+                title.innerHTML +=  `<input type="text" class="form-control" name="title"> <br>`;
+                author.innerHTML +=  `<input type="text" class="form-control" name="author"> <br>`;
+                url.innerHTML +=  `<input type="text" class="form-control" name="url"> <br>`;
+                stock.innerHTML +=  `<input type="number" class="form-control" name="stock" min="1" max="5"><br>`;
+            }
+        }
+
+    });
+</script>
 
 {{template "footer.html"}}
