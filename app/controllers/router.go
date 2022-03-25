@@ -22,10 +22,11 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 	r.GET("library/book/get-all-books/:message", h.GetAllBooks())
 	r.GET("library/book/get-all-books", h.GetAllBooks())
 	r.GET("/library/login", h.Login())
+	r.GET("/library/logout", h.Logout())
 	r.POST("library/login/auth", h.LoginAuth())
 	r.GET("/library/signup", h.SignUp())
 	r.POST("library/signup/auth", h.SignUpAuth())
-	r.NoRoute(func(c *gin.Context) { c.HTML(200, "404.page.html", nil) })
+	r.NoRoute(func(c *gin.Context) { c.HTML(404, "404.page.html", nil) })
 
 	book := r.Group("library/book", middleware.Session())
 	{
