@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+func (db *DbInstance) StudentSignUp(s Student) error {
+	s.FirstName = strings.ToLower(s.FirstName)
+	s.LastName = strings.ToLower(s.LastName)
+	stm, err := db.Postgres.Prepare(fmt.Sprintf("INSERT INTO students (id, first_name, last_name, user_name, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"))
+	if err != nil {
+		return err
+	}
+	_, err = stm.Exec(s.ID, s.FirstName, s.LastName, s.UserName, s.Password, time.Now().String(), time.Now().String())
+	if err != nil {
+		return err
+	}
+	return err
+}
+
 func (db *DbInstance) StudentCheckIn(s Student) error {
 	s.FirstName = strings.ToLower(s.FirstName)
 	s.LastName = strings.ToLower(s.LastName)
