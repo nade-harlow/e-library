@@ -47,18 +47,21 @@ func (h NewHttp) Login() gin.HandlerFunc {
 
 func (h NewHttp) LoginAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//user_name:= c.PostForm("user_name")
-		//password:= c.PostForm("password")
-		title := c.PostFormArray("title")
-		author := c.PostFormArray("author")
-		url := c.PostFormArray("url")
-		stock := c.PostFormArray("stock")
-		log.Println("title", title)
-		log.Println("author", author)
-		log.Println("url", url)
-		log.Println("stock", stock)
-
-		c.Redirect(http.StatusFound, "/library/lend/get-lenders")
+		userName := c.PostForm("user_name")
+		password := c.PostForm("password")
+		user, err := h.Db.StudentLogin(userName, password)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		if user.FirstName != "" {
+			log.Println(user.ID)
+			c.SetCookie("session", user.ID, 3600, "/", "", true, true)
+			c.Redirect(http.StatusFound, "/library/lend/get-lenders")
+			return
+		}
+		//TODO: handle constraint
+		c.Redirect(http.StatusFound, "/library/signup")
 	}
 }
 
@@ -94,6 +97,14 @@ func (h *NewHttp) SignUpAuth() gin.HandlerFunc {
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		book := models.Book{}
+		//title := c.PostFormArray("title")
+		//author := c.PostFormArray("author")
+		//url := c.PostFormArray("url")
+		//stock := c.PostFormArray("stock")
+		//log.Println("title", title)
+		//log.Println("author", author)
+		//log.Println("url", url)
+		//log.Println("stock", stock)
 		book.Title = c.PostForm("title")
 		book.Author = c.PostForm("author")
 		book.Url = c.PostForm("url")
