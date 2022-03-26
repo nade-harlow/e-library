@@ -8,7 +8,7 @@ type Db interface {
 	GetBookById(id string)
 	GetBookByTitle(title string) (Book, error)
 	CheckStockCount(ID string) int
-	UpdateStockCount(bookID string) error
+	UpdateStockCount(bookID, stock string) error
 	GetBook(title string) (Book, error)
 	ReturnBook(studentId, bookId string) error
 	BorrowBook(bookId, studentId string) error
