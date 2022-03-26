@@ -117,6 +117,7 @@ func (db *DbInstance) ReturnBook(studentId, bookId string) error {
 	if num < 1 {
 		return errors.New("error updating row")
 	}
+	_ = db.UpdateStockCount(bookId, "stock+1")
 	return nil
 }
 
