@@ -7,6 +7,7 @@ type Db interface {
 	CheckBookAvailability(title string) (bool, string)
 	GetBookById(id string)
 	GetBookByTitle(title string) (Book, error)
+	CheckStockCount(ID string) int
 	GetBook(title string) (Book, error)
 	ReturnBook(studentId, bookId string) error
 	BorrowBook(bookId, studentId string) error
