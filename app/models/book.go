@@ -88,10 +88,38 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	return book, nil
 }
 
+func (db DbInstance) UpdateStockCount(bookID string) error {
+	stock := db.CheckStockCount(bookID)
+	if stock == 0 {
+		return errors.New(fmt.Sprintf(`book is no longer in shelf`))
+	}
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET stock= stock-1 WHERE id = $1"))
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(bookID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (db DbInstance) CheckStockCount(bookID string) int {
+	book := Book{}
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT stock FROM books WHERE id = $1"), bookID)
+	err := row.Scan(&book.StockCount)
+	if err != nil {
+		log.Println(err.Error())
+		return 0
+	}
+	return book.StockCount
+}
+
 func (db DbInstance) GetBook(title string) (Book, error) {
 	book := Book{}
 	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE title = $1"), title)
-	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.StockCount, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
 		return book, err
