@@ -88,8 +88,8 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 	return book, nil
 }
 
-func (db DbInstance) UpdateStockCount(bookID string) error {
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET stock= stock-1 WHERE id = $1"))
+func (db DbInstance) UpdateStockCount(bookID, stock string) error {
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET stock = %s WHERE id = $1", stock))
 	if err != nil {
 		return err
 	}
