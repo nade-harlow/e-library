@@ -89,10 +89,6 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 }
 
 func (db DbInstance) UpdateStockCount(bookID string) error {
-	stock := db.CheckStockCount(bookID)
-	if stock == 0 {
-		return errors.New(fmt.Sprintf(`book is no longer in shelf`))
-	}
 	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET stock= stock-1 WHERE id = $1"))
 	if err != nil {
 		return err
