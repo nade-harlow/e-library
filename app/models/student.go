@@ -71,6 +71,10 @@ func (db DbInstance) GetStudentByUserName(userName string) (Student, error) {
 }
 
 func (db *DbInstance) BorrowBook(bookId, studentId string) error {
+	stock := db.CheckStockCount(bookId)
+	if stock == 0 {
+		return errors.New(fmt.Sprintf(`book is no longer in shelf`))
+	}
 	bbb, _ := db.CheckIfBorrowed(studentId, bookId)
 	if bbb.BookID != "" {
 		return errors.New("you've already borrowed this book")
@@ -84,6 +88,8 @@ func (db *DbInstance) BorrowBook(bookId, studentId string) error {
 	if err != nil {
 		return err
 	}
+	_ = db.UpdateStockCount(bookId)
+
 	return err
 }
 
