@@ -177,13 +177,19 @@ func (h NewHttp) BorrowBook() gin.HandlerFunc {
 			return
 		}
 		err = h.Db.BorrowBook(book.ID, studentID)
+		var message string
 		if err != nil {
-			message := "you've already borrowed this book"
+			if err.Error() == "book is no longer in shelf" {
+				message = fmt.Sprintf("sorry, %s is not available", strings.ToTitle(bookTitle))
+				c.Redirect(http.StatusFound, fmt.Sprintf("/library/book/get-all-books/%s", message))
+				return
+			}
+			message = "you've already borrowed this book"
 			c.Redirect(http.StatusFound, fmt.Sprintf("/library/book/get-all-books/%s", message))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		message := fmt.Sprintf(`you just borrowed %s by %s`, strings.ToTitle(book.Title), strings.ToTitle(book.Author))
+		message = fmt.Sprintf(`you just borrowed %s by %s`, strings.ToTitle(book.Title), strings.ToTitle(book.Author))
 		c.Redirect(http.StatusFound, fmt.Sprintf("/library/book/get-all-books/%s", message))
 	}
 }
