@@ -88,7 +88,7 @@ func (db *DbInstance) BorrowBook(bookId, studentId string) error {
 	if err != nil {
 		return err
 	}
-	_ = db.UpdateStockCount(bookId)
+	_ = db.UpdateStockCount(bookId, "stock-1")
 
 	return err
 }
