@@ -10,7 +10,7 @@ import (
 )
 
 func Start() {
-	router := gin.New()
+	router := gin.Default()
 	router.StaticFS("static", http.Dir("app/views/static"))
 	router.LoadHTMLGlob("app/views/html/*")
 	db := models.Init()
