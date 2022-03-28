@@ -117,18 +117,6 @@ func (h *NewHttp) AddBook() gin.HandlerFunc {
 				return
 			}
 		}
-		//log.Println("title", title)
-		//log.Println("author", author)
-		//log.Println("url", url)
-		//log.Println("stock", stock)
-		//book.Title = c.PostForm("title")
-		//book.Author = c.PostForm("author")
-		//book.Url = c.PostForm("url")
-		//err := h.Db.AddBook(book)
-		//if err != nil {
-		//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//	return
-		//}
 		c.Redirect(http.StatusFound, "/library/admin/books")
 	}
 }
