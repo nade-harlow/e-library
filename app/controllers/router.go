@@ -13,6 +13,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		admin.GET("/", h.GetAllLibraryBooks())
 		admin.GET("/books", h.GetAllLibraryBooks())
 		admin.GET("/add-book", h.Book())
+		admin.POST("/add-books", h.AddBook())
 		admin.GET("/books/history", h.GetLendingHistory())
 		admin.POST("/books/history", h.GetLendingHistory())
 		admin.GET("/books/:message", h.GetAllLibraryBooks())
