@@ -8,6 +8,7 @@ import (
 	"github.com/nade-harlow/e-library/app/models"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -96,23 +97,38 @@ func (h *NewHttp) SignUpAuth() gin.HandlerFunc {
 
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Println("here")
 		book := models.Book{}
-		//title := c.PostFormArray("title")
-		//author := c.PostFormArray("author")
-		//url := c.PostFormArray("url")
-		//stock := c.PostFormArray("stock")
+		title := c.PostFormArray("title")
+		author := c.PostFormArray("author")
+		url := c.PostFormArray("url")
+		stock := c.PostFormArray("stock")
+		log.Println(title, author, url, stock)
+		for i := 0; i < len(title); i++ {
+			item, _ := strconv.Atoi(stock[i])
+			book.ID = uuid.NewString()
+			book.Title = title[i]
+			book.Author = author[i]
+			book.Url = url[i]
+			book.StockCount = item
+			if err := h.Db.AddBook(book); err != nil {
+				log.Println(err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		}
 		//log.Println("title", title)
 		//log.Println("author", author)
 		//log.Println("url", url)
 		//log.Println("stock", stock)
-		book.Title = c.PostForm("title")
-		book.Author = c.PostForm("author")
-		book.Url = c.PostForm("url")
-		err := h.Db.AddBook(book)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+		//book.Title = c.PostForm("title")
+		//book.Author = c.PostForm("author")
+		//book.Url = c.PostForm("url")
+		//err := h.Db.AddBook(book)
+		//if err != nil {
+		//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		//	return
+		//}
 		c.Redirect(http.StatusFound, "/library/admin/books")
 	}
 }
