@@ -43,6 +43,7 @@ func (db *DbInstance) GetAllBooks() ([]Book, error) {
 		if err != nil {
 			return nil, err
 		}
+		book.CreatedAt = book.CreatedAt[:19]
 		books = append(books, book)
 	}
 	return books, nil
@@ -60,14 +61,15 @@ func (db DbInstance) CheckBookAvailability(title string) (bool, string) {
 	return book.Available, book.Author
 }
 
-func (db DbInstance) GetBookById(id string) {
+func (db DbInstance) GetBookById(bookID string) Book {
 	book := Book{}
-	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE id = $1"), id)
-	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.Available, &book.CreatedAt, &book.ModifiedAt)
+	row := db.Postgres.QueryRow(fmt.Sprintf("SELECT * FROM books WHERE id = $1"), bookID)
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Url, &book.StockCount, &book.Available, &book.CreatedAt, &book.ModifiedAt)
 	if err != nil {
 		log.Println(err.Error())
-		return
+		return book
 	}
+	return book
 }
 
 func (db DbInstance) GetBookByTitle(title string) (Book, error) {
@@ -121,6 +123,18 @@ func (db DbInstance) GetBook(title string) (Book, error) {
 		return book, err
 	}
 	return book, nil
+}
+
+func (db DbInstance) UpdateBook(book Book) error {
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET title = $1, author = $2, url = $3, available = $4, stock = $5, updated_at = $6 WHERE id = $7"))
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(book.Title, book.Author, book.Url, true, book.StockCount, time.Now().String(), book.ID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (db *DbInstance) UpdateBookStatus(status bool, bookID string) error {
