@@ -26,7 +26,7 @@ func (db *DbInstance) GetAllLending(returned bool) ([]map[string]interface{}, er
 			"BookTitle":  BookTitle,
 			"BookAuthor": BookAuthor,
 			"BookUrl":    BookUrl,
-			"BookTime":   BookTime[:16],
+			"BookTime":   BookTime[:19],
 		}
 		Bbooks = append(Bbooks, borrowedBooks)
 	}
