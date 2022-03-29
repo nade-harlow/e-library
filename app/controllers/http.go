@@ -262,12 +262,23 @@ func (h NewHttp) UpdateBookStatus() gin.HandlerFunc {
 
 func (h NewHttp) DeleteBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		book := models.Book{}
 		bookID := c.Param("book-id")
-		err := h.Db.DeleteBookById(bookID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+		books := c.PostFormArray("book-id")
+		for _, bookID := range books {
+			book.ID = bookID
+			err := h.Db.DeleteBookById(book.ID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 		}
+
+		//err := h.Db.DeleteBookById(bookID)
+		//if err != nil {
+		//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		//	return
+		//}
 		message := "Book Removed From Library Successfully"
 		c.Redirect(http.StatusFound, fmt.Sprintf("/library/admin/books/%s", message))
 	}
@@ -308,6 +319,34 @@ func (h *NewHttp) GetAllLibraryBooks() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.HTML(200, "admin.all.books.html", gin.H{"Books": books, "Message": message})
+		c.HTML(200, "admin.manage.books.html", gin.H{"Books": books, "Message": message})
+	}
+}
+
+func (h NewHttp) EditBook() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		bookID := c.Param("book-id")
+		book := h.Db.GetBookById(bookID)
+		c.HTML(200, "admin.update.book.html", book)
+	}
+}
+
+func (h NewHttp) UpdateBook() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		book := models.Book{}
+		item, _ := strconv.Atoi(c.PostForm("stock"))
+		book.ID = c.Param("book-id")
+		book.Title = c.PostForm("title")
+		book.Author = c.PostForm("author")
+		book.Url = c.PostForm("url")
+		book.StockCount = item
+
+		err := h.Db.UpdateBook(book)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		message := "Book Updated Successfully"
+		c.Redirect(http.StatusFound, fmt.Sprintf("/library/admin/books/%s", message))
 	}
 }
