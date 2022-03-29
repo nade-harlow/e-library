@@ -13,6 +13,7 @@
     <table class="table table-striped">
         <thead>
         <tr>
+            <th>#</th>
             <th>Firstname</th>
             <th>Lastname</th>
             <th>Book</th>
@@ -23,6 +24,9 @@
         <tbody>
     {{range .History}}
         <tr>
+            <td>
+                <input type="checkbox">
+            </td>
             <td>{{.FirstName}}</td>
             <td>{{.LastName}}</td>
             <td>{{.BookTitle}}</td>
