@@ -4,7 +4,7 @@
     <div class="card" id="top">
         <form class="forms" action="/library/admin/add-books" method="post" id="form">
             <div class="check-in"><h3>Add Book</h3></div>
-            <input type="text" id="item"><button type="button" id="insert">Insert</button>
+            <input type="number" id="item" min="1" max="5"><button type="button" id="insert">Insert</button>
             <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input type="text" class="form-control" name="title">
@@ -25,7 +25,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Stock</label>
-                <input type="number" class="form-control" name="stock" min="1" max="5">
+                <input type="number" class="form-control" name="stock">
                 <br>
                 <span id="stock"></span>
             </div>
@@ -53,7 +53,7 @@
                 title.innerHTML +=  `<input type="text" class="form-control" name="title"> <br>`;
                 author.innerHTML +=  `<input type="text" class="form-control" name="author"> <br>`;
                 url.innerHTML +=  `<input type="text" class="form-control" name="url"> <br>`;
-                stock.innerHTML +=  `<input type="number" class="form-control" name="stock" min="1" max="5"><br>`;
+                stock.innerHTML +=  `<input type="number" class="form-control" name="stock" ><br>`;
             }
         }
 
