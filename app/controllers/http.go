@@ -262,22 +262,29 @@ func (h NewHttp) UpdateBookStatus() gin.HandlerFunc {
 
 func (h NewHttp) DeleteBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		book := models.Book{}
 		bookID := c.Param("book-id")
-		books := c.PostFormArray("book-id")
-		for _, bookID := range books {
-			book.ID = bookID
-			err := h.Db.DeleteBookById(book.ID)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
+		err := h.Db.DeleteBookById(bookID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
 		}
+		message := "Book Removed From Library Successfully"
+		c.Redirect(http.StatusFound, fmt.Sprintf("/library/admin/books/%s", message))
+	}
+}
 
-		//err := h.Db.DeleteBookById(bookID)
-		//if err != nil {
-		//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//	return
+func (h NewHttp) BulkDelete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//book := models.Book{}
+		books := c.PostFormArray("checkbox")
+		log.Println(books)
+		//for _, bookID := range books {
+		//	book.ID = bookID
+		//	err := h.Db.DeleteBookById(book.ID)
+		//	if err != nil {
+		//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		//		return
+		//	}
 		//}
 		message := "Book Removed From Library Successfully"
 		c.Redirect(http.StatusFound, fmt.Sprintf("/library/admin/books/%s", message))
