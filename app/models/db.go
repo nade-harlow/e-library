@@ -5,7 +5,7 @@ type Db interface {
 	AddBook(book Book) error
 	GetAllBooks() ([]Book, error)
 	CheckBookAvailability(title string) (bool, string)
-	GetBookById(id string)
+	GetBookById(id string) Book
 	GetBookByTitle(title string) (Book, error)
 	CheckStockCount(ID string) int
 	UpdateStockCount(bookID, stock string) error
@@ -21,6 +21,7 @@ type Db interface {
 	CheckLendStatus(studentId, bookId string) error
 	GetAllLending(returned bool) ([]map[string]interface{}, error)
 	UpdateBookStatus(status bool, bookID string) error
+	UpdateBook(book Book) error
 	DeleteBookById(bookID string) error
 	DeleteBookByTitle(bookTitle string) error
 }
