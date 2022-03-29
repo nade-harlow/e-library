@@ -18,6 +18,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 		admin.POST("/books/history", h.GetLendingHistory())
 		admin.GET("/books/:message", h.GetAllLibraryBooks())
 		admin.GET("/books/delete/:book-id", h.DeleteBook())
+		admin.POST("/books/bulk/delete", h.BulkDelete())
 		admin.GET("/books/edit/:book-id", h.EditBook())
 		admin.POST("/books/:book-id/edit", h.UpdateBook())
 	}
