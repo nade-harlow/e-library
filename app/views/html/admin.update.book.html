@@ -1,0 +1,30 @@
+{{template "header.html"}}
+{{template "admin.navbar.html"}}
+<div class="container" >
+    <div class="card" id="top">
+        <form class="forms" action="/library/admin/books/{{.ID}}/edit" method="post" id="form">
+            <div class="check-in"><h3>Add Book</h3></div>
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" value="{{.Title}}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Author</label>
+                <input type="text" class="form-control" name="author" value="{{.Author}}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Picture url</label>
+                <input type="text" class="form-control" name="url" value="{{.Url}}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" class="form-control" name="stock" value="{{.StockCount}}">
+            </div>
+
+            <button type="submit" class="btn btn-dark">Submit</button>
+        </form>
+    </div>
+
+</div>
+
+{{template "footer.html"}}
