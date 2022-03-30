@@ -5,7 +5,7 @@
                 <div class="check-in"><h3>Student Login</h3></div>
                 <div class="mb-3">
                     <label for="UserName" class="form-label">User Name</label>
-                    <input type="text" class="form-control" name="user_name">
+                    <input type="text" class="form-control" id="UserName" name="user_name">
                 </div>
 
                 <div class="mb-3">
@@ -13,11 +13,21 @@
                     <input type="password" class="form-control" name="password">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" onclick="setCookie()">Submit</button>
             </form>
     </div>
 
 </div>
 
+<script>
+   let user = document.getElementById("UserName")
+    function setCookie() {
+        var d = new Date();
+        d.setTime(d.getTime() + (1*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie =  "UserName"+ "=" + user.value + ";" + expires + ";path=/";
+    }
+
+</script>
 
 {{template "footer.html"}}
