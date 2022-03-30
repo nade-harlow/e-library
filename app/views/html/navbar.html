@@ -17,20 +17,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="javascript:void(0)">fantasy</a>
                     </li>
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown">
-                            student
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li ><a style="color: black" class="nav-link dropdown-item" href="/library/lend/get-lenders">Return books</a></li>
-                        </ul>
+
+
+                    <div class="dropdown" id="dropdown">
+
                     </div>
                 </ul>
-
+                <li class="d-flex" id="login"></li>
                 <form class="d-flex" method="post" action="/library/book/search">
-                    <ul class="nav-item">
-                        <li ><a class="nav-link" href="/library/logout">Logout</a></li>
-                    </ul>
                     <input class="form-control me-2" type="text" name="book-title" placeholder="Search book">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </form>
@@ -39,3 +33,44 @@
     </nav>
     </div>
 </div>
+
+<script>
+    function removeCookie() {
+        document.cookie = "UserName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    function getCookies(cookieName) {
+        var name = cookieName + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+
+    login = document.getElementById("login");
+    dropdown = document.getElementById("dropdown");
+    let cook = getCookies("UserName");
+        console.log(cook);
+    if(cook == ""){
+        login.innerHTML = '<a class="nav-link" style="color: white" href="/library/login">Login</a>';
+    }else {
+        dropdown.innerHTML = ` <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown">
+                                   Hi ${cook}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li ><a style="color: black" class="nav-link dropdown-item" href="/library/lend/get-lenders">Return books</a></li>
+                                    <li ><a style="color: black" class="nav-link" href="/library/logout" onclick="removeCookie('UserName')"> Logout</a></li>
+                                </ul>
+                                `;
+    }
+
+</script>
