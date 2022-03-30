@@ -4,28 +4,28 @@
     <div class="card" id="top">
         <form class="forms" action="/library/admin/add-books" method="post" id="form">
             <div class="check-in"><h3>Add Book</h3></div>
-            <input type="number" id="item" min="1" max="5"><button type="button" id="insert">Insert</button>
+            <input type="number" class="" id="item" min="2" max="5" style="width: 50px"> <button type="button" id="insert" class="btn btn-dark" >Bulk insert</button>
             <div class="mb-3">
                 <label class="form-label">Title</label>
-                <input type="text" class="form-control" name="title">
+                <input type="text" class="form-control" name="title" required>
                 <br>
                 <span id="title"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Author</label>
-                <input type="text" class="form-control" name="author">
+                <input type="text" class="form-control" name="author" required>
                 <br>
                 <span id="author"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Picture url</label>
-                <input type="text" class="form-control" name="url">
+                <input type="text" class="form-control" name="url" required>
                 <br>
                 <span id="url"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Stock</label>
-                <input type="number" class="form-control" name="stock">
+                <input type="number" class="form-control" name="stock" required>
                 <br>
                 <span id="stock"></span>
             </div>
@@ -47,17 +47,24 @@
 
     button.addEventListener('click', function(e) {
         e.preventDefault()
-        for (let i = 0; i < item.value; i++) {
+
+        for (let i = 0; i < item.value-1; i++) {
+            console.log(item.value);
             num++;
             if (num < 5){
-                title.innerHTML +=  `<input type="text" class="form-control" name="title"> <br>`;
-                author.innerHTML +=  `<input type="text" class="form-control" name="author"> <br>`;
-                url.innerHTML +=  `<input type="text" class="form-control" name="url"> <br>`;
-                stock.innerHTML +=  `<input type="number" class="form-control" name="stock" ><br>`;
+                title.innerHTML +=  `<input type="text" class="form-control" name="title" required> <br>`;
+                author.innerHTML +=  `<input type="text" class="form-control" name="author" required> <br>`;
+                url.innerHTML +=  `<input type="text" class="form-control" name="url" required> <br>`;
+                stock.innerHTML +=  `<input type="number" class="form-control" name="stock" required><br>`;
             }
         }
 
+
     });
+    title.innerHTML =``
+    author.innerHTML =``
+    url.innerHTML =``
+    stock.innerHTML =``
 </script>
 
 {{template "footer.html"}}
