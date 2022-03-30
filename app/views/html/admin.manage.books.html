@@ -1,0 +1,98 @@
+{{template "header.html"}}
+{{template "admin.navbar.html"}}
+<div class="container mt-3">
+    {{if eq .Message ""}}
+    <span></span>
+    {{else}}
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span>{{.Message}}</span>
+    </div>
+
+    {{end}}
+    <h2>Manage Books</h2>
+
+    <input type="text" class="form-control " style="width: auto" id="myInput" onkeyup="myFunction()" placeholder="Search for books..">
+    <br>
+    <form action="/library/admin/books/bulk/delete" method="post">
+        <input type="checkbox" id="checkAll">  Mark All
+        <span id="ss"></span>
+    <table class="table table-striped" id="myTable">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date Added</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Books}}
+        <tr>
+            <td><input type="checkbox" name="checkbox" id="checked" value="{{.ID}}"></td>
+            <td><img src="{{.Url}}" width="30px" height="30px"></td>
+            <td>{{.Title}}</td>
+            <td>{{.Author}}</td>
+
+            <td>{{.CreatedAt}}</td>
+            <td><a href="/library/admin/books/edit/{{.ID}}" class="btn btn-dark">Edit</a> <a href="/library/admin/books/delete/{{.ID}}" class="btn btn-danger">Delete</a></td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    </form>
+</div>
+
+<script>
+    function myFunction() {
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+        let i = document.getElementById("ss");
+        let checkAll = document.getElementById("checkAll");
+        let check = document.getElementById("checked");
+
+        checkAll.addEventListener("click", function(){
+            if(checkAll.checked){
+                // document.querySelector("#ss").innerHTML = `<button type="submit" class="btn btn-danger">Delete</button>`;
+                document.querySelectorAll("input[type=checkbox]").forEach(function(item){
+                    item.checked = true;
+                    i.innerHTML = `<button type="submit" class="btn btn-danger">Delete</button>`
+                });
+            }else{
+                // document.querySelector("#ss").innerHTML = ``;
+                document.querySelectorAll("input[type=checkbox]").forEach(function(item){
+                    item.checked = false;
+                    i.innerHTML = ``
+                });
+            }
+        });
+        check.addEventListener('click', function(e) {
+
+            if (e.target.checked){
+                i.innerHTML = `<button type="submit" class="btn btn-danger">Delete</button>`
+      }else{
+                i.innerHTML = ``
+    }
+        });
+
+
+</script>
+
+{{template "footer.html"}}
