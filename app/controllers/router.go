@@ -52,6 +52,6 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 
 	lend := r.Group("library/lend", middleware.Session())
 	{
-		lend.GET("/get-lenders", h.GetAllBorrowedBooks())
+		lend.GET("/borrowed-books", h.GetAllBorrowedBooks())
 	}
 }
