@@ -58,7 +58,7 @@ func (h NewHttp) LoginAuth() gin.HandlerFunc {
 		if user.FirstName != "" {
 			log.Println(user.ID)
 			c.SetCookie("session", user.ID, 3600, "/", "", true, true)
-			c.Redirect(http.StatusFound, "/library/lend/get-lenders")
+			c.Redirect(http.StatusFound, "/library/lend/borrowed-books")
 			return
 		}
 		//TODO: handle constraint
@@ -212,7 +212,7 @@ func (h NewHttp) ReturnBook() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.Redirect(http.StatusFound, "/library/lend/get-lenders")
+		c.Redirect(http.StatusFound, "/library/lend/borrowed-books")
 		c.JSON(http.StatusOK, gin.H{"response": fmt.Sprintf(`Thank you for returning '%s'`, book.Title)})
 	}
 }
