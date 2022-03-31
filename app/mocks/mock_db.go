@@ -106,6 +106,20 @@ func (mr *MockDbMockRecorder) CheckLendStatus(studentId, bookId interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckLendStatus", reflect.TypeOf((*MockDb)(nil).CheckLendStatus), studentId, bookId)
 }
 
+// CheckStockCount mocks base method.
+func (m *MockDb) CheckStockCount(ID string) int {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckStockCount", ID)
+	ret0, _ := ret[0].(int)
+	return ret0
+}
+
+// CheckStockCount indicates an expected call of CheckStockCount.
+func (mr *MockDbMockRecorder) CheckStockCount(ID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckStockCount", reflect.TypeOf((*MockDb)(nil).CheckStockCount), ID)
+}
+
 // DeleteBookById mocks base method.
 func (m *MockDb) DeleteBookById(bookID string) error {
 	m.ctrl.T.Helper()
@@ -180,9 +194,11 @@ func (mr *MockDbMockRecorder) GetBook(title interface{}) *gomock.Call {
 }
 
 // GetBookById mocks base method.
-func (m *MockDb) GetBookById(id string) {
+func (m *MockDb) GetBookById(id string) models.Book {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "GetBookById", id)
+	ret := m.ctrl.Call(m, "GetBookById", id)
+	ret0, _ := ret[0].(models.Book)
+	return ret0
 }
 
 // GetBookById indicates an expected call of GetBookById.
@@ -264,6 +280,49 @@ func (mr *MockDbMockRecorder) StudentCheckIn(s interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StudentCheckIn", reflect.TypeOf((*MockDb)(nil).StudentCheckIn), s)
 }
 
+// StudentLogin mocks base method.
+func (m *MockDb) StudentLogin(username, password string) (models.Student, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StudentLogin", username, password)
+	ret0, _ := ret[0].(models.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StudentLogin indicates an expected call of StudentLogin.
+func (mr *MockDbMockRecorder) StudentLogin(username, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StudentLogin", reflect.TypeOf((*MockDb)(nil).StudentLogin), username, password)
+}
+
+// StudentSignUp mocks base method.
+func (m *MockDb) StudentSignUp(s models.Student) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StudentSignUp", s)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// StudentSignUp indicates an expected call of StudentSignUp.
+func (mr *MockDbMockRecorder) StudentSignUp(s interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StudentSignUp", reflect.TypeOf((*MockDb)(nil).StudentSignUp), s)
+}
+
+// UpdateBook mocks base method.
+func (m *MockDb) UpdateBook(book models.Book) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBook", book)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateBook indicates an expected call of UpdateBook.
+func (mr *MockDbMockRecorder) UpdateBook(book interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBook", reflect.TypeOf((*MockDb)(nil).UpdateBook), book)
+}
+
 // UpdateBookStatus mocks base method.
 func (m *MockDb) UpdateBookStatus(status bool, bookID string) error {
 	m.ctrl.T.Helper()
@@ -276,4 +335,18 @@ func (m *MockDb) UpdateBookStatus(status bool, bookID string) error {
 func (mr *MockDbMockRecorder) UpdateBookStatus(status, bookID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBookStatus", reflect.TypeOf((*MockDb)(nil).UpdateBookStatus), status, bookID)
+}
+
+// UpdateStockCount mocks base method.
+func (m *MockDb) UpdateStockCount(bookID, stock string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStockCount", bookID, stock)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateStockCount indicates an expected call of UpdateStockCount.
+func (mr *MockDbMockRecorder) UpdateStockCount(bookID, stock interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStockCount", reflect.TypeOf((*MockDb)(nil).UpdateStockCount), bookID, stock)
 }
