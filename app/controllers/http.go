@@ -56,7 +56,6 @@ func (h NewHttp) LoginAuth() gin.HandlerFunc {
 			return
 		}
 		if user.FirstName != "" {
-			log.Println(user.ID)
 			c.SetCookie("session", user.ID, 3600, "/", "", true, true)
 			c.Redirect(http.StatusFound, "/library/lend/borrowed-books")
 			return
