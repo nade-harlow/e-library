@@ -96,13 +96,11 @@ func (h *NewHttp) SignUpAuth() gin.HandlerFunc {
 
 func (h *NewHttp) AddBook() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		log.Println("here")
 		book := models.Book{}
 		title := c.PostFormArray("title")
 		author := c.PostFormArray("author")
 		url := c.PostFormArray("url")
 		stock := c.PostFormArray("stock")
-		log.Println(title, author, url, stock)
 		for i := 0; i < len(title); i++ {
 			item, _ := strconv.Atoi(stock[i])
 			book.ID = uuid.NewString()
