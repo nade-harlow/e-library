@@ -275,17 +275,17 @@ func (h NewHttp) DeleteBook() gin.HandlerFunc {
 
 func (h NewHttp) BulkDelete() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//book := models.Book{}
+		book := models.Book{}
 		books := c.PostFormArray("checkbox")
 		log.Println(books)
-		//for _, bookID := range books {
-		//	book.ID = bookID
-		//	err := h.Db.DeleteBookById(book.ID)
-		//	if err != nil {
-		//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//		return
-		//	}
-		//}
+		for _, bookID := range books {
+			book.ID = bookID
+			err := h.Db.DeleteBookById(book.ID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		}
 		message := "Book Removed From Library Successfully"
 		c.Redirect(http.StatusFound, fmt.Sprintf("/library/admin/books/%s", message))
 	}
