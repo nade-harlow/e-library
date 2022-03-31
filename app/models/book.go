@@ -33,7 +33,7 @@ func (db *DbInstance) AddBook(book Book) error {
 
 func (db *DbInstance) GetAllBooks() ([]Book, error) {
 	books := []Book{}
-	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM books"))
+	row, err := db.Postgres.Query(fmt.Sprintf("SELECT * FROM books ORDER BY created_at ASC"))
 	if err != nil {
 		return nil, err
 	}
@@ -91,11 +91,11 @@ func (db DbInstance) GetBookByTitle(title string) (Book, error) {
 }
 
 func (db DbInstance) UpdateStockCount(bookID, stock string) error {
-	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET stock = %s WHERE id = $1", stock))
+	stmt, err := db.Postgres.Prepare(fmt.Sprintf("UPDATE books SET stock = %s, updated_at = $1 WHERE id = $2", stock))
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(bookID)
+	_, err = stmt.Exec(time.Now().String(), bookID)
 	if err != nil {
 		return err
 	}
