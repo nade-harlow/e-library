@@ -19,10 +19,11 @@
                     </li>
 
 
-                    <div class="dropdown" id="dropdown">
 
-                    </div>
                 </ul>
+                <li class="d-flex dropdown" id="dropdown">
+
+                </li>
                 <li class="d-flex" id="login"></li>
                 <form class="d-flex" method="post" action="/library/book/search">
                     <input class="form-control me-2" type="text" name="book-title" placeholder="Search book">
@@ -38,6 +39,13 @@
     function removeCookie() {
         document.cookie = "UserName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
+
+    Object.defineProperty(String.prototype, 'capitalize', {
+        value: function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        },
+        enumerable: false
+    });
 
     function getCookies(cookieName) {
         var name = cookieName + "=";
@@ -64,10 +72,10 @@
         login.innerHTML = '<a class="nav-link" style="color: white" href="/library/login">Login</a>';
     }else {
         dropdown.innerHTML = ` <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown">
-                                   Hi ${cook}
+                                   Hi ${cook.capitalize()}!
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li ><a style="color: black" class="nav-link dropdown-item" href="/library/lend/get-lenders">Return books</a></li>
+                                    <li ><a style="color: black" class="nav-link dropdown-item" href="/library/lend/borrowed-books">Return books</a></li>
                                     <li ><a style="color: black" class="nav-link" href="/library/logout" onclick="removeCookie('UserName')"> Logout</a></li>
                                 </ul>
                                 `;
