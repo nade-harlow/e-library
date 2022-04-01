@@ -71,6 +71,8 @@ func (db DbInstance) GetStudentByUserName(userName string) (Student, error) {
 }
 
 func (db *DbInstance) BorrowBook(bookId, studentId string) error {
+	one := time.Now()
+	date := one.Add(time.Hour * 1)
 	stock := db.CheckStockCount(bookId)
 	if stock == 0 {
 		return errors.New(fmt.Sprintf(`book is no longer in shelf`))
@@ -84,7 +86,7 @@ func (db *DbInstance) BorrowBook(bookId, studentId string) error {
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(uuid.NewString(), studentId, bookId, false, time.Now().String(), time.Now().String())
+	_, err = stmt.Exec(uuid.NewString(), studentId, bookId, false, date.String(), date.String())
 	if err != nil {
 		return err
 	}
