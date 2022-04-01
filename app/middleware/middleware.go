@@ -17,3 +17,15 @@ func Session() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func CheckNotLogin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, err := c.Cookie("session")
+		if err != nil {
+			c.Next()
+			return
+		}
+
+		c.Redirect(http.StatusFound, "/library/book/get-all-books")
+	}
+}
