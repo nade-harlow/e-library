@@ -25,7 +25,7 @@ func (h *NewHttp) Routes(r *gin.Engine) {
 
 	r.GET("library/book/get-all-books/:message", h.GetAllBooks())
 	r.GET("library/book/get-all-books", h.GetAllBooks())
-	r.GET("/library/login", h.Login())
+	r.GET("/library/login", middleware.CheckNotLogin(), h.Login())
 	r.GET("/library/logout", h.Logout())
 	r.POST("library/login/auth", h.LoginAuth())
 	r.GET("/library/signup", h.SignUp())
