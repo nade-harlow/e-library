@@ -37,7 +37,6 @@
 </div>
 
 <script>
-    let num = 0;
     let item = document.getElementById('item');
     let title = document.getElementById('title');
     let author = document.getElementById('author');
@@ -47,7 +46,11 @@
 
     button.addEventListener('click', function(e) {
         e.preventDefault()
-
+        let num = 0;
+        title.innerHTML =``
+        author.innerHTML =``
+        url.innerHTML =``
+        stock.innerHTML =``
         for (let i = 0; i < item.value-1; i++) {
             console.log(item.value);
             num++;
@@ -61,10 +64,6 @@
 
 
     });
-    title.innerHTML =``
-    author.innerHTML =``
-    url.innerHTML =``
-    stock.innerHTML =``
 </script>
 
 {{template "footer.html"}}
