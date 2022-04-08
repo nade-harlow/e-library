@@ -42,3 +42,5 @@ DB_NAME=e_library
 ```
 
 > Note: This project is built using PostgreSQL so configure the `.env` file using PostgreSQL credentials.
+
+> Click [here](https://harlow-elibrary.herokuapp.com/) see a live demo
